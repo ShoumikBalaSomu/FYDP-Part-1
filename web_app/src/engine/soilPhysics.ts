@@ -33,11 +33,20 @@ export const EC_SALINITY_RATIO_MIN = 0.25;
 export const EC_SALINITY_RATIO_MAX = 1.2;
 export const EC_SALINITY_MIN_US_CM = 10.0;
 
+export const MAX_NUTRIENT_MG_KG = 1_000_000.0;
+export const MAX_SALINITY_MG_L = 1_000_000.0;
+export const MAX_EC_DS_M = 1_000.0;
+export const MAX_DEPTH_CM = 1_000.0;
+
 export function kCmolToMgKg(kCmolKg: number): number {
   if (!Number.isFinite(kCmolKg)) {
     throw new Error(`Potassium value must be finite, got ${String(kCmolKg)}`);
   }
-  return kCmolKg * K_CMOL_TO_MG_KG;
+  const res = kCmolKg * K_CMOL_TO_MG_KG;
+  if (!Number.isFinite(res)) {
+    throw new Error(`Potassium conversion overflowed finite range for input ${String(kCmolKg)}`);
+  }
+  return res;
 }
 
 export function normalizePotassiumToMgKg(value: number, unit: KUnit): number {
@@ -247,6 +256,60 @@ export function validateSoilReading(
       probable_causes: ["Open/shorted thermistor or NTC lookup error."],
       remediation: "Inspect temperature thermistor wiring and replace faulty probe.",
     });
+  }
+
+  // 3b. Hard gate: upper physical sanity caps against numerical poison (e.g., 1e308)
+  const upperCaps: ReadonlyArray<[string, number | null, number]> = [
+    ["nitrogen_mg_kg", reading.nitrogen_mg_kg, MAX_NUTRIENT_MG_KG],
+    ["phosphorus_mg_kg", reading.phosphorus_mg_kg, MAX_NUTRIENT_MG_KG],
+    ["potassium_mg_kg", reading.potassium_mg_kg, MAX_NUTRIENT_MG_KG],
+    ["salinity_mg_l", reading.salinity_mg_l, MAX_SALINITY_MG_L],
+    ["ec_ds_m", reading.ec_ds_m, MAX_EC_DS_M],
+    ["depth_mid_cm", reading.depth_mid_cm, MAX_DEPTH_CM],
+    ["sand_pct", reading.sand_pct, 100.0],
+    ["silt_pct", reading.silt_pct, 100.0],
+    ["clay_pct", reading.clay_pct, 100.0],
+  ];
+  for (const [fieldName, val, cap] of upperCaps) {
+    if (val !== null && val > cap) {
+      flags.push({
+        code: "SENSOR_FAULT_CRITICAL",
+        severity: "CRITICAL",
+        field: fieldName,
+        value: val,
+        message: `Implausible physical reading for ${fieldName}: ${val} exceeds physical ceiling ${cap}.`,
+        probable_causes: ["Corrupted numeric overflow, telemetry poison, or unit scaling failure."],
+        remediation: "Verify telemetry register bounds and sensor scaling before re-running.",
+      });
+    }
+  }
+  if (reading.depth_mid_cm !== null && reading.depth_mid_cm < 0.0) {
+    flags.push({
+      code: "SENSOR_FAULT_CRITICAL",
+      severity: "CRITICAL",
+      field: "depth_mid_cm",
+      value: reading.depth_mid_cm,
+      message: `Negative sampling depth ${reading.depth_mid_cm} cm is invalid.`,
+      probable_causes: ["Malformed depth interval or negative depth offset."],
+      remediation: "Enter a non-negative soil depth interval.",
+    });
+  }
+  for (const [texField, texVal] of [
+    ["sand_pct", reading.sand_pct],
+    ["silt_pct", reading.silt_pct],
+    ["clay_pct", reading.clay_pct],
+  ] as const) {
+    if (texVal !== null && texVal < 0.0) {
+      flags.push({
+        code: "SENSOR_FAULT_CRITICAL",
+        severity: "CRITICAL",
+        field: texField,
+        value: texVal,
+        message: `Negative soil texture fraction for ${texField}: ${texVal}%.`,
+        probable_causes: ["Corrupted laboratory entry."],
+        remediation: "Enter percentages within [0, 100].",
+      });
+    }
   }
 
   // 4. Warning: EC unit ambiguity

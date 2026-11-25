@@ -47,10 +47,21 @@ KAGGLE_OC_MAX_PCT: float = 5.0
 KAGGLE_ZN_MAX_MG_KG: float = 10.0
 KAGGLE_FE_MAX_MG_KG: float = 20.0
 
+NUTRIENT_SALINITY_MAX_MG_KG: float = 1_000_000.0
+EC_MAX_DS_M: float = 1000.0
+DEPTH_MAX_CM: float = 1000.0
+PCT_MAX: float = 100.0
+
 
 def k_cmol_to_mg_kg(k_cmol_kg: float) -> float:
     """Convert exchangeable K from cmol(+)/kg to mg/kg using 391.0 mg/kg per cmol(+)/kg."""
-    return float(k_cmol_kg) * K_CMOL_TO_MG_KG
+    val = float(k_cmol_kg)
+    if not math.isfinite(val):
+        raise ValueError(f"Exchangeable K value must be finite, got {k_cmol_kg!r}")
+    converted = val * K_CMOL_TO_MG_KG
+    if not math.isfinite(converted):
+        raise ValueError(f"Potassium conversion overflowed finite float64 bounds: {k_cmol_kg!r}")
+    return converted
 
 
 def soc_g_kg_to_pct(soc_g_kg: float) -> float:
@@ -237,6 +248,36 @@ def validate_soil_reading(
                 remediation="Inspect temperature thermistor wiring and replace faulty probe.",
             )
         )
+
+    # 3b. Hard gate: upper physical ceilings (100% pure mass / brine / 10m profile limits)
+    upper_bounds: list[tuple[str, float | None, float, float]] = [
+        ("nitrogen_mg_kg", reading.nitrogen_mg_kg, 0.0, NUTRIENT_SALINITY_MAX_MG_KG),
+        ("phosphorus_mg_kg", reading.phosphorus_mg_kg, 0.0, NUTRIENT_SALINITY_MAX_MG_KG),
+        ("potassium_mg_kg", reading.potassium_mg_kg, 0.0, NUTRIENT_SALINITY_MAX_MG_KG),
+        ("salinity_mg_l", reading.salinity_mg_l, 0.0, NUTRIENT_SALINITY_MAX_MG_KG),
+        ("ec_ds_m", reading.ec_ds_m, 0.0, EC_MAX_DS_M),
+        ("depth_mid_cm", reading.depth_mid_cm, 0.0, DEPTH_MAX_CM),
+        ("total_nitrogen_pct", reading.total_nitrogen_pct, 0.0, PCT_MAX),
+        ("sand_pct", reading.sand_pct, 0.0, PCT_MAX),
+        ("silt_pct", reading.silt_pct, 0.0, PCT_MAX),
+        ("clay_pct", reading.clay_pct, 0.0, PCT_MAX),
+    ]
+    for field_name, val, lo_lim, hi_lim in upper_bounds:
+        if val is not None and (val < lo_lim or val > hi_lim):
+            flags.append(
+                PhysicsDiagnosticFlag(
+                    code="SENSOR_FAULT_CRITICAL",
+                    severity="CRITICAL",
+                    field=field_name,
+                    value=val,
+                    message=(
+                        f"{field_name}={val:.4g} falls outside physical sanity bounds "
+                        f"[{lo_lim:.4g}, {hi_lim:.4g}]."
+                    ),
+                    probable_causes=["Numerical overflow, unscaled register, or corrupted input."],
+                    remediation="Verify sensor unit scaling and reject non-physical extremes.",
+                )
+            )
 
     # 4. Warning: EC unit ambiguity
     if reading.ec_raw is not None and reading.ec_unit == "unknown":

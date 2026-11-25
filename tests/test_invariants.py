@@ -31,6 +31,7 @@ from ml_core.spatial_cv import evaluate_model_ladder  # noqa: E402
 REGISTRY_PATH = ROOT_DIR / "models" / "registry.json"
 MANIFEST_PATH = ROOT_DIR / "models" / "artifacts_manifest.json"
 SCHEMA_PATH = ROOT_DIR / "docs" / "contracts" / "model_registry_schema.json"
+KAGGLE_CSV_PATH = ROOT_DIR / "data" / "raw" / "kaggle_soil_fertility" / "dataset1.csv"
 
 
 def test_registry_conforms_to_draft_2020_12_schema() -> None:
@@ -94,18 +95,6 @@ def test_python_vs_registry_json_prediction_parity_under_1e_minus_6() -> None:
         < 1e-6
     )
 
-    kaggle_bundle = load_kaggle_soil_fertility(allow_fixture_fallback=False)
-    kaggle_eval = evaluate_model_ladder(kaggle_bundle, n_splits=5, random_state=42)
-    assert (
-        verify_registry_parity(
-            registry["models"]["kaggle_mineral_oc_benchmark"],
-            kaggle_eval.baseline_pipeline,
-            kaggle_bundle,
-            tolerance=1e-6,
-        )
-        < 1e-6
-    )
-
     poxc_with = train_poxc_pipeline(include_lab_soc=True, n_splits=5, random_state=42)
     poxc_without = train_poxc_pipeline(include_lab_soc=False, n_splits=5, random_state=42)
     assert (
@@ -122,6 +111,25 @@ def test_python_vs_registry_json_prediction_parity_under_1e_minus_6() -> None:
             registry["models"]["usda_kssl_poxc_without_soc"],
             poxc_without.evaluation.champion_pipeline,
             load_usda_kssl_poxc(include_lab_soc=False),
+            tolerance=1e-6,
+        )
+        < 1e-6
+    )
+
+
+@pytest.mark.skipif(
+    not KAGGLE_CSV_PATH.exists(),
+    reason="Kaggle dataset1.csv absent in credential-free CI (--skip-kaggle).",
+)
+def test_kaggle_registry_json_prediction_parity_under_1e_minus_6() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    kaggle_bundle = load_kaggle_soil_fertility(allow_fixture_fallback=False)
+    kaggle_eval = evaluate_model_ladder(kaggle_bundle, n_splits=5, random_state=42)
+    assert (
+        verify_registry_parity(
+            registry["models"]["kaggle_mineral_oc_benchmark"],
+            kaggle_eval.baseline_pipeline,
+            kaggle_bundle,
             tolerance=1e-6,
         )
         < 1e-6

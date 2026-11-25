@@ -40,6 +40,8 @@ from ml_core.soil_physics import (  # noqa: E402
 )
 from ml_core.spatial_cv import compute_srdi_leakage_comparison, evaluate_model_ladder  # noqa: E402
 
+KAGGLE_CSV_PATH = ROOT_DIR / "data" / "raw" / "kaggle_soil_fertility" / "dataset1.csv"
+
 
 def test_srdi_kushtia_harmonization_and_tn_exclusion() -> None:
     bundle = load_srdi_kushtia()
@@ -53,15 +55,7 @@ def test_srdi_kushtia_harmonization_and_tn_exclusion() -> None:
     assert k_cmol_to_mg_kg(0.23) == pytest.approx(89.93)
 
 
-def test_kaggle_outlier_flagging_and_fixture_fallback(tmp_path: Path) -> None:
-    bundle = load_kaggle_soil_fertility(allow_fixture_fallback=False)
-    assert bundle.audit_info["raw_rows"] == 880
-    assert bundle.audit_info["flagged_outlier_rows"] == 7
-    assert bundle.audit_info["clean_rows"] == 873
-    assert len(bundle.df) == 873
-    assert len(bundle.excluded_df) == 7
-    assert not bundle.is_synthetic_or_fixture
-
+def test_kaggle_missing_and_fixture_fallback(tmp_path: Path) -> None:
     missing = tmp_path / "missing.csv"
     with pytest.raises(FileNotFoundError):
         load_kaggle_soil_fertility(path=missing, allow_fixture_fallback=False)
@@ -70,6 +64,20 @@ def test_kaggle_outlier_flagging_and_fixture_fallback(tmp_path: Path) -> None:
     assert fixture_bundle.is_synthetic_or_fixture is True
     assert fixture_bundle.dataset_id == "ci_schema_fixture_only"
     assert len(fixture_bundle.df) == 6
+
+
+@pytest.mark.skipif(
+    not KAGGLE_CSV_PATH.exists(),
+    reason="Kaggle dataset1.csv absent in credential-free CI (--skip-kaggle).",
+)
+def test_kaggle_real_outlier_flagging() -> None:
+    bundle = load_kaggle_soil_fertility(allow_fixture_fallback=False)
+    assert bundle.audit_info["raw_rows"] == 880
+    assert bundle.audit_info["flagged_outlier_rows"] == 7
+    assert bundle.audit_info["clean_rows"] == 873
+    assert len(bundle.df) == 873
+    assert len(bundle.excluded_df) == 7
+    assert not bundle.is_synthetic_or_fixture
 
 
 def test_usda_kssl_poxc_unit_conversion_and_subset() -> None:

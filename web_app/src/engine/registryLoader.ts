@@ -1,9 +1,12 @@
+import { assertMaxJsonDepth } from "./esrcAdapter";
 import type { ModelEntry, ModelRegistry } from "./types";
 
 const LOCAL_MODELS_STORAGE_KEY = "somsense_local_aez_models_v1";
 const IDB_NAME = "somsense_local_db";
 const IDB_STORE = "calibrated_models";
 const FORBIDDEN_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+const SHA256_HEX_RE = /^[a-f0-9]{64}$/;
+const LOCAL_MODEL_ID_RE = /^local_[a-z0-9_]+$/;
 
 type RawJsonNode =
   | { kind: "obj"; entries: Array<[string, RawJsonNode]> }
@@ -16,6 +19,7 @@ type RawJsonNode =
  * so canonical serialization matches Python json.dumps(sort_keys=True, separators=(",", ":")).
  */
 function parseRawJsonAst(src: string): RawJsonNode {
+  assertMaxJsonDepth(src, 32);
   let i = 0;
 
   const skipWs = (): void => {
@@ -289,13 +293,45 @@ export async function fetchAndVerifyRegistry(url = "./models/registry.json"): Pr
   return parseAndVerifyRegistryText(rawText);
 }
 
+function isValidLocalModelEntry(key: string, candidate: unknown): candidate is ModelEntry {
+  if (!LOCAL_MODEL_ID_RE.test(key)) return false;
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return false;
+  const entry = candidate as Partial<ModelEntry>;
+  if (entry.model_id !== key) return false;
+  if (
+    typeof entry.artifact_sha256 !== "string" ||
+    !SHA256_HEX_RE.test(entry.artifact_sha256) ||
+    entry.artifact_sha256 === "0".repeat(64)
+  ) {
+    return false;
+  }
+  if (!entry.preprocessing?.raw_features?.length || !entry.predictor || !entry.uncertainty || !entry.ood) {
+    return false;
+  }
+  const rawFeatSet = new Set(entry.preprocessing.raw_features);
+  if (rawFeatSet.has("TN_pct") || rawFeatSet.has("total_nitrogen_pct")) {
+    return false;
+  }
+  return true;
+}
+
 export function loadLocalCalibratedModels(): Record<string, ModelEntry> {
   try {
     const raw = globalThis.localStorage?.getItem(LOCAL_MODELS_STORAGE_KEY);
     if (!raw) return {};
-    const parsed = JSON.parse(raw) as unknown;
+    const parsed: unknown = JSON.parse(raw, (key, value: unknown) => {
+      if (FORBIDDEN_KEYS.has(key)) return undefined;
+      return value;
+    });
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
-    return parsed as Record<string, ModelEntry>;
+    const safeOut: Record<string, ModelEntry> = {};
+    for (const [k, v] of Object.entries(parsed as Record<string, unknown>)) {
+      if (FORBIDDEN_KEYS.has(k)) continue;
+      if (isValidLocalModelEntry(k, v)) {
+        safeOut[k] = v;
+      }
+    }
+    return safeOut;
   } catch {
     return {};
   }

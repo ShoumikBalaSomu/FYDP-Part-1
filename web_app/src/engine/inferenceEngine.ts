@@ -15,9 +15,15 @@ import type {
 
 function evalSerializedTree(tree: SerializedTree, features: readonly number[]): number {
   let idx = 0;
+  let steps = 0;
   const { children_left, children_right, feature, threshold, value, missing_go_to_left } = tree;
+  const maxSteps = children_left.length;
 
   while (idx >= 0 && idx < children_left.length && children_left[idx] !== -1) {
+    if (steps >= maxSteps) {
+      throw new Error("Invalid tree structure: cycle or excessive depth detected.");
+    }
+    steps++;
     const fIdx = feature[idx] ?? 0;
     const val = features[fIdx] ?? Number.NaN;
     const thresh = threshold[idx] ?? 0.0;
@@ -28,6 +34,9 @@ function evalSerializedTree(tree: SerializedTree, features: readonly number[]): 
       goLeft = val <= thresh;
     }
     idx = goLeft ? (children_left[idx] ?? -1) : (children_right[idx] ?? -1);
+  }
+  if (idx < 0 || idx >= value.length) {
+    throw new Error("Invalid tree structure: leaf index out of bounds.");
   }
   return value[idx] ?? 0.0;
 }
@@ -169,6 +178,9 @@ export function assessOod(
       rowSum += (row[j] ?? 0.0) * (diff[j] ?? 0.0);
     }
     d2 += di * rowSum;
+  }
+  if (!Number.isFinite(d2)) {
+    d2 = Number.MAX_VALUE;
   }
 
   let status: CalibrationDomainStatus;

@@ -85,19 +85,31 @@ export function exportReadingToSafeCsv(
   return `${headers.join(",")}\n${row.map(escapeCsvField).join(",")}\n`;
 }
 
+export function sanitizeMarkdownText(raw: string): string {
+  const escaped = raw.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return sanitizeSpreadsheetCell(escaped);
+}
+
 export function exportReadingToJsonBundle(
   reading: SoilReadingInput,
   prediction: InferencePredictionResult,
   model: ModelEntry
 ): string {
+  const safeSite = sanitizeSpreadsheetCell(reading.raw_site_id ?? reading.site_id ?? "");
+  const safeDevice = sanitizeSpreadsheetCell(reading.raw_device_id ?? reading.device_id ?? "");
   const bundle = {
     schema_version: "1.0.0",
     exported_at_utc: new Date().toISOString(),
     platform: "SOMSense-ESRC",
     input_telemetry: {
       ...reading,
-      site_id: sanitizeSpreadsheetCell(reading.raw_site_id ?? reading.site_id ?? ""),
-      device_id: sanitizeSpreadsheetCell(reading.raw_device_id ?? reading.device_id ?? ""),
+      site_id: safeSite,
+      device_id: safeDevice,
+      raw_site_id: reading.raw_site_id ? sanitizeSpreadsheetCell(reading.raw_site_id) : null,
+      raw_device_id: reading.raw_device_id ? sanitizeSpreadsheetCell(reading.raw_device_id) : null,
+      aez_zone: reading.aez_zone ? sanitizeSpreadsheetCell(reading.aez_zone) : null,
+      depth_cm: reading.depth_cm ? sanitizeSpreadsheetCell(reading.depth_cm) : null,
+      texture_class: reading.texture_class ? sanitizeSpreadsheetCell(reading.texture_class) : null,
       crop: reading.crop ? sanitizeSpreadsheetCell(reading.crop) : null,
     },
     prediction_summary: {
@@ -129,15 +141,19 @@ export function exportReadingToMarkdownBrief(
   prediction: InferencePredictionResult,
   model: ModelEntry
 ): string {
-  const site = reading.raw_site_id ?? reading.site_id ?? "Unspecified Site";
-  const device = reading.raw_device_id ?? reading.device_id ?? "ESRC Sensor";
+  const site = sanitizeMarkdownText(reading.raw_site_id ?? reading.site_id ?? "Unspecified Site");
+  const device = sanitizeMarkdownText(reading.raw_device_id ?? reading.device_id ?? "ESRC Sensor");
+  const aez = sanitizeMarkdownText(reading.aez_zone ?? "N/A");
+  const depth = sanitizeMarkdownText(reading.depth_cm ?? "N/A");
   const lines: string[] = [
     `# SOMSense Field Calibration Brief — ${site}`,
     "",
     `- **Sensor Unit**: ${device}`,
-    `- **AEZ / Depth**: ${reading.aez_zone ?? "N/A"} | ${reading.depth_cm ?? "N/A"} cm`,
-    `- **Timestamp**: ${reading.timestamp ?? new Date().toISOString()}`,
-    `- **Model Version**: \`${model.model_id}\` v${model.model_version} (\`${model.artifact_sha256.slice(0, 12)}...\`)`,
+    `- **AEZ / Depth**: ${aez} | ${depth} cm`,
+    `- **Timestamp**: ${sanitizeMarkdownText(reading.timestamp ?? new Date().toISOString())}`,
+    `- **Model Version**: \`${sanitizeMarkdownText(model.model_id)}\` v${sanitizeMarkdownText(
+      model.model_version
+    )} (\`${model.artifact_sha256.slice(0, 12)}...\`)`,
     `- **Calibration Domain Status**: ${prediction.calibrationDomainStatus} (Mahalanobis D^2 = ${prediction.oodAssessment.mahalanobisD2.toFixed(2)})`,
     "",
     "## Calibrated Output",
@@ -165,7 +181,7 @@ export function exportReadingToMarkdownBrief(
     lines.push("- All soil physics and sensor integrity checks passed.");
   } else {
     for (const flag of prediction.physicsReport.flags) {
-      lines.push(`- **${flag.code}** (${flag.severity}): ${flag.message}`);
+      lines.push(`- **${flag.code}** (${flag.severity}): ${sanitizeMarkdownText(flag.message)}`);
     }
   }
   lines.push("");

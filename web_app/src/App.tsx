@@ -68,8 +68,8 @@ export function App() {
 
   const mergedModels = useMemo<Record<string, ModelEntry>>(() => {
     return {
-      ...(registry?.models ?? {}),
       ...localModels,
+      ...(registry?.models ?? {}),
     };
   }, [registry, localModels]);
 

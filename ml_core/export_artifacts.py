@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -40,6 +41,7 @@ from ml_core.soil_physics import (
 from ml_core.spatial_cv import BenchmarkEvaluation, ModelCVResult
 
 ROOT_DIR: Path = Path(__file__).resolve().parent.parent
+MAX_INFERENCE_ABS_VALUE: float = 1e12
 CANONICALIZATION_DESC = (
     "json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False)"
 )
@@ -229,7 +231,12 @@ def _eval_serialized_tree(tree: Mapping[str, Any], features: Sequence[float]) ->
     vals = tree["value"]
     missing_left = tree.get("missing_go_to_left")
 
+    max_steps = len(left)
+    steps = 0
     while left[idx] != -1:
+        steps += 1
+        if steps > max_steps:
+            raise ValueError("Invalid cyclic decision tree detected during inference.")
         f_idx = int(feat_arr[idx])
         val = float(features[f_idx])
         if np.isnan(val):
@@ -250,12 +257,20 @@ def predict_from_registry_entry(
     means: Mapping[str, float] = prep["feature_means"]
     stds: Mapping[str, float] = prep["feature_stds"]
 
-    # 1. Impute missing with training mean and standardize
+    # 1. Validate numeric sanity, impute missing with training mean, and standardize
     raw_vec = np.zeros(len(raw_features), dtype=np.float64)
     z_map: dict[str, float] = {}
     for i, feat in enumerate(raw_features):
         val = raw_sample.get(feat)
-        imputed = float(means[feat]) if val is None or not np.isfinite(float(val)) else float(val)
+        if val is None:
+            imputed = float(means[feat])
+        else:
+            fval = float(val)
+            if not math.isfinite(fval) or abs(fval) > MAX_INFERENCE_ABS_VALUE:
+                raise ValueError(
+                    f"Non-finite or extreme value for '{feat}' exceeds inference bounds: {val!r}"
+                )
+            imputed = fval
         raw_vec[i] = imputed
         z_map[feat] = (imputed - float(means[feat])) / float(stds[feat])
 
@@ -290,6 +305,8 @@ def predict_from_registry_entry(
         )
         y_hat = float(pred_cfg["base_score"]) + float(pred_cfg["learning_rate"]) * agg
 
+    if not math.isfinite(y_hat):
+        raise ValueError("Model inference overflowed to non-finite value.")
     y_hat = max(0.0, y_hat)
 
     # 3. Conformal 95% bounds
@@ -312,11 +329,15 @@ def predict_from_registry_entry(
     tail_bounds = False
     for idx, feat in enumerate(ood_features):
         val = raw_sample.get(feat)
-        if val is None or not np.isfinite(float(val)):
+        if val is None:
             missing_any = True
             ood_vec[idx] = maha_mean[idx]
         else:
             fval = float(val)
+            if not math.isfinite(fval) or abs(fval) > MAX_INFERENCE_ABS_VALUE:
+                raise ValueError(
+                    f"Non-finite or extreme value for '{feat}' exceeds OOD bounds: {val!r}"
+                )
             ood_vec[idx] = fval
             if fval < ood_mins[idx] or fval > ood_maxs[idx]:
                 out_bounds = True
@@ -325,6 +346,8 @@ def predict_from_registry_entry(
 
     diff = ood_vec - maha_mean
     d2 = float(diff @ maha_inv_cov @ diff)
+    if not math.isfinite(d2):
+        raise ValueError("Mahalanobis D^2 computation overflowed to non-finite value.")
     if out_bounds or d2 > float(ood_cfg["d2_ood_threshold"]):
         domain_status: CalibrationDomainStatus = "Outside Calibration Range"
     elif missing_any or tail_bounds or d2 > float(ood_cfg["d2_caution_threshold"]):
@@ -333,6 +356,64 @@ def predict_from_registry_entry(
         domain_status = "In-Range"
 
     return point, ci_low, ci_high, domain_status, d2
+
+
+def verify_registry_document(doc: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Verify platform invariants, canonical root SHA-256, and per-model artifact hashes."""
+    if doc.get("platform") != "SOMSense-ESRC":
+        raise ValueError(f"Unexpected registry platform: {doc.get('platform')!r}")
+
+    proto = doc.get("authority_protocol")
+    if not isinstance(proto, Mapping):
+        raise ValueError("Missing authority_protocol object in registry.")
+    if proto.get("forbid_direct_sensor_om") is not True:
+        raise ValueError("authority_protocol.forbid_direct_sensor_om must be true.")
+    if proto.get("forbid_passive_c_subtraction") is not True:
+        raise ValueError("authority_protocol.forbid_passive_c_subtraction must be true.")
+
+    integrity = doc.get("integrity")
+    if not isinstance(integrity, Mapping):
+        raise ValueError("Missing integrity block in registry.")
+    if integrity.get("hash_algorithm") != "SHA-256":
+        raise ValueError(
+            f"Unsupported registry hash algorithm: {integrity.get('hash_algorithm')!r}"
+        )
+
+    payload_no_integrity = {k: v for k, v in doc.items() if k != "integrity"}
+    expected_root_hash = canonical_sha256(payload_no_integrity)
+    actual_root_hash = integrity.get("canonical_payload_sha256")
+    if actual_root_hash != expected_root_hash:
+        raise ValueError(
+            "Registry integrity SHA-256 mismatch: "
+            f"expected {expected_root_hash}, got {actual_root_hash!r}."
+        )
+
+    models = doc.get("models")
+    if not isinstance(models, Mapping) or not models:
+        raise ValueError("Registry must define a non-empty 'models' map.")
+    for model_id, entry in models.items():
+        if not isinstance(entry, Mapping):
+            raise ValueError(f"Model entry '{model_id}' must be a mapping.")
+        entry_no_hash = {k: v for k, v in entry.items() if k != "artifact_sha256"}
+        expected_entry_hash = canonical_sha256(entry_no_hash)
+        actual_entry_hash = entry.get("artifact_sha256")
+        if actual_entry_hash != expected_entry_hash:
+            raise ValueError(
+                f"Model '{model_id}' artifact_sha256 mismatch: "
+                f"expected {expected_entry_hash}, got {actual_entry_hash!r}."
+            )
+    return doc
+
+
+def load_and_verify_registry(
+    path: Path = ROOT_DIR / "models" / "registry.json",
+) -> dict[str, Any]:
+    """Load models/registry.json from disk and fail closed on any integrity mismatch."""
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise ValueError("Registry JSON root must be an object.")
+    verify_registry_document(raw)
+    return raw
 
 
 def verify_registry_parity(

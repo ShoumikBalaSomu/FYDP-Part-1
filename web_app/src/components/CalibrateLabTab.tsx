@@ -11,6 +11,7 @@ import {
 import { useId, useState } from "react";
 import { AEZ_CALIBRATION_TEMPLATE_CSV, UI_COPY } from "../copy/uiCopy";
 import { runInBrowserCalibration, type CalibrationRunResult } from "../engine/calibrationEngine";
+import { sanitizeMarkdownText } from "../engine/reportExporter";
 import type { ECUnit, KUnit, ModelEntry, ModelRegistry, SOCUnit } from "../engine/types";
 import { triggerBrowserDownload } from "../utils/download";
 
@@ -133,9 +134,9 @@ export function CalibrateLabTab({
   const buildCertificateMarkdown = (cal: CalibrationRunResult): string => {
     const m = cal.modelEntry;
     return [
-      `# SOMSense Local Calibration Certificate — ${m.model_id}`,
+      `# SOMSense Local Calibration Certificate — ${sanitizeMarkdownText(m.model_id)}`,
       "",
-      `- **Source Label**: ${m.provenance.source_title}`,
+      `- **Source Label**: ${sanitizeMarkdownText(m.provenance.source_title)}`,
       `- **Selected Model Family**: ${m.selected_model_family} (beats OLS baseline: ${m.beats_ols_baseline})`,
       `- **CV Strategy**: ${m.metrics.cv_strategy}`,
       `- **Valid Rows / Sites**: ${cal.validRowCount} rows across ${cal.uniqueSiteCount} sites (${cal.quarantinedRowCount} faulted rows quarantined)`,

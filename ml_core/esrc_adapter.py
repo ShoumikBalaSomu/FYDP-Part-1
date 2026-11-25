@@ -17,9 +17,11 @@ from ml_core.schemas import ECUnit, PhysicsValidationReport, SoilReadingInput
 from ml_core.soil_physics import normalize_ec_to_ds_m, validate_soil_reading
 
 MAX_UPLOAD_BYTES: int = 10 * 1024 * 1024
-MAX_UPLOAD_ROWS: int = 50_000
+MAX_UPLOAD_ROWS: int = 10_000
+MAX_JSON_DEPTH: int = 32
+_MAX_SHORT_TEXT_LEN: int = 64
 _PROTO_POLLUTION_KEYS = frozenset({"__proto__", "constructor", "prototype"})
-_FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+_FORMULA_CHARS = ("=", "+", "-", "@")
 
 # Case-insensitive alias table mapping ESRC IoT / AEZ CSV columns to canonical SoilReadingInput keys
 _FIELD_ALIASES: dict[str, str] = {
@@ -78,24 +80,54 @@ _FIELD_ALIASES: dict[str, str] = {
 
 
 def sanitize_spreadsheet_cell(value: str) -> str:
-    """Neutralize CSV/Excel formula injection prefixes (=, +, -, @, tab, CR)."""
-    if value.startswith(_FORMULA_PREFIXES):
-        return f"'{value}"
-    return value
+    """Neutralize CSV/Excel formula injection prefixes (=, +, -, @, tab, CR, LF, leading space)."""
+    had_control_prefix = value.startswith(("\t", "\r", "\n"))
+    single_line = value.replace("\r", " ").replace("\n", " ")
+    if had_control_prefix or single_line.lstrip().startswith(_FORMULA_CHARS):
+        return f"'{single_line}"
+    return single_line
+
+
+def _check_json_nesting_depth(text: str, max_depth: int = MAX_JSON_DEPTH) -> None:
+    """Check JSON object/array nesting depth iteratively in O(N) without recursion."""
+    depth = 0
+    in_string = False
+    escaped = False
+    for ch in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch in "{[":
+            depth += 1
+            if depth > max_depth:
+                raise ValueError(
+                    f"JSON nesting depth exceeds maximum allowed depth of {max_depth}."
+                )
+        elif ch in "}]":
+            depth -= 1
 
 
 def reject_prototype_pollution(obj: object) -> None:
-    """Recursively reject prototype-pollution keys (__proto__, constructor, prototype)."""
-    if isinstance(obj, Mapping):
-        for k, v in obj.items():
-            if not isinstance(k, str):
-                raise ValueError("JSON object keys must be strings.")
-            if k in _PROTO_POLLUTION_KEYS:
-                raise ValueError(f"Rejected forbidden prototype-pollution key: {k!r}")
-            reject_prototype_pollution(v)
-    elif isinstance(obj, list):
-        for item in obj:
-            reject_prototype_pollution(item)
+    """Iteratively reject prototype-pollution keys (__proto__, constructor, prototype)."""
+    stack: list[object] = [obj]
+    while stack:
+        curr = stack.pop()
+        if isinstance(curr, Mapping):
+            for k, v in curr.items():
+                if not isinstance(k, str):
+                    raise ValueError("JSON object keys must be strings.")
+                if k in _PROTO_POLLUTION_KEYS:
+                    raise ValueError(f"Rejected forbidden prototype-pollution key: {k!r}")
+                stack.append(v)
+        elif isinstance(curr, list):
+            stack.extend(curr)
 
 
 def _reject_non_finite_constant(token: str) -> Any:
@@ -131,6 +163,10 @@ def _to_optional_str(val: object) -> str | None:
 def _validate_iso_timestamp(ts: str | None) -> str | None:
     if ts is None:
         return None
+    if len(ts) > _MAX_SHORT_TEXT_LEN:
+        raise ValueError(
+            f"Malformed ISO-8601 timestamp exceeds max length ({_MAX_SHORT_TEXT_LEN})."
+        )
     normalized = ts[:-1] + "+00:00" if ts.endswith("Z") else ts
     try:
         datetime.fromisoformat(normalized)
@@ -140,21 +176,23 @@ def _validate_iso_timestamp(ts: str | None) -> str | None:
 
 
 def _parse_depth_midpoint(depth_cm: str | None) -> float | None:
-    if depth_cm is None:
+    if depth_cm is None or len(depth_cm) > _MAX_SHORT_TEXT_LEN:
         return None
     if "-" in depth_cm:
         parts = depth_cm.split("-", maxsplit=1)
         try:
             top = float(parts[0].strip())
             bottom = float(parts[1].strip())
-            if top <= bottom:
+            if math.isfinite(top) and math.isfinite(bottom) and top <= bottom:
                 return (top + bottom) / 2.0
         except ValueError:
             return None
+        return None
     try:
-        return float(depth_cm)
+        val = float(depth_cm)
     except ValueError:
         return None
+    return val if math.isfinite(val) else None
 
 
 def parse_esrc_record(
@@ -198,14 +236,21 @@ def parse_esrc_record(
 
     raw_site = _to_optional_str(mapped.get("site_id"))
     raw_device = _to_optional_str(mapped.get("device_id"))
+    raw_aez = _to_optional_str(mapped.get("aez_zone"))
+    raw_depth = _to_optional_str(mapped.get("depth_cm"))
+    raw_texture = _to_optional_str(mapped.get("texture_class"))
+    raw_crop = _to_optional_str(mapped.get("crop"))
+
     safe_site = sanitize_spreadsheet_cell(raw_site) if raw_site is not None else None
     safe_device = sanitize_spreadsheet_cell(raw_device) if raw_device is not None else None
-    crop_raw = _to_optional_str(mapped.get("crop"))
-    safe_crop = sanitize_spreadsheet_cell(crop_raw) if crop_raw is not None else None
-    depth_cm = _to_optional_str(mapped.get("depth_cm"))
+    safe_aez = sanitize_spreadsheet_cell(raw_aez) if raw_aez is not None else None
+    safe_depth = sanitize_spreadsheet_cell(raw_depth) if raw_depth is not None else None
+    safe_texture = sanitize_spreadsheet_cell(raw_texture) if raw_texture is not None else None
+    safe_crop = sanitize_spreadsheet_cell(raw_crop) if raw_crop is not None else None
+
     depth_mid = _to_optional_float(mapped.get("depth_mid_cm"), "depth_mid_cm")
     if depth_mid is None:
-        depth_mid = _parse_depth_midpoint(depth_cm)
+        depth_mid = _parse_depth_midpoint(raw_depth)
 
     reading = SoilReadingInput(
         site_id=safe_site,
@@ -213,10 +258,10 @@ def parse_esrc_record(
         raw_site_id=raw_site,
         raw_device_id=raw_device,
         timestamp=_validate_iso_timestamp(_to_optional_str(mapped.get("timestamp"))),
-        aez_zone=_to_optional_str(mapped.get("aez_zone")),
+        aez_zone=safe_aez,
         lat=_to_optional_float(mapped.get("lat"), "lat"),
         lon=_to_optional_float(mapped.get("lon"), "lon"),
-        depth_cm=depth_cm,
+        depth_cm=safe_depth,
         depth_mid_cm=depth_mid,
         nitrogen_mg_kg=_to_optional_float(mapped.get("nitrogen_mg_kg"), "nitrogen_mg_kg"),
         phosphorus_mg_kg=_to_optional_float(mapped.get("phosphorus_mg_kg"), "phosphorus_mg_kg"),
@@ -238,7 +283,7 @@ def parse_esrc_record(
         sand_pct=_to_optional_float(mapped.get("sand_pct"), "sand_pct"),
         silt_pct=_to_optional_float(mapped.get("silt_pct"), "silt_pct"),
         clay_pct=_to_optional_float(mapped.get("clay_pct"), "clay_pct"),
-        texture_class=_to_optional_str(mapped.get("texture_class")),
+        texture_class=safe_texture,
         crop=safe_crop,
     )
 
@@ -253,14 +298,17 @@ def parse_esrc_json(
     ec_unit: ECUnit = "unknown",
     max_bytes: int = MAX_UPLOAD_BYTES,
     max_rows: int = MAX_UPLOAD_ROWS,
+    max_depth: int = MAX_JSON_DEPTH,
 ) -> list[tuple[SoilReadingInput, PhysicsValidationReport]]:
     """Parse ESRC IoT single-reading JSON or batch list with strict security/physics checks."""
     raw_bytes = raw_json.encode("utf-8") if isinstance(raw_json, str) else raw_json
     if len(raw_bytes) > max_bytes:
         raise ValueError(f"JSON payload exceeds max allowed size of {max_bytes} bytes.")
 
+    text = raw_bytes.decode("utf-8")
+    _check_json_nesting_depth(text, max_depth=max_depth)
     decoded = json.loads(
-        raw_bytes.decode("utf-8"),
+        text,
         parse_constant=_reject_non_finite_constant,
     )
     reject_prototype_pollution(decoded)
@@ -288,28 +336,42 @@ def parse_aez_csv(
     max_rows: int = MAX_UPLOAD_ROWS,
 ) -> tuple[pd.DataFrame, list[PhysicsValidationReport]]:
     """Parse an AEZ calibration or ESRC telemetry CSV safely with row/byte bounds."""
-    if isinstance(source, Path) or (
-        isinstance(source, str) and "\n" not in source and Path(source).exists()
-    ):
-        path = Path(source)
-        size = path.stat().st_size
-        if size > max_bytes:
+    if isinstance(source, Path):
+        if source.stat().st_size > max_bytes:
             raise ValueError(f"CSV file exceeds max allowed size of {max_bytes} bytes.")
-        text = path.read_text(encoding="utf-8")
+        text = source.read_text(encoding="utf-8")
     else:
-        text = source
-        if len(text.encode("utf-8")) > max_bytes:
+        if len(source.encode("utf-8")) > max_bytes:
             raise ValueError(f"CSV payload exceeds max allowed size of {max_bytes} bytes.")
+        if len(source) < 4096 and "\n" not in source and "\r" not in source:
+            maybe_path = Path(source)
+            if maybe_path.exists():
+                if maybe_path.stat().st_size > max_bytes:
+                    raise ValueError(f"CSV file exceeds max allowed size of {max_bytes} bytes.")
+                text = maybe_path.read_text(encoding="utf-8")
+            else:
+                text = source
+        else:
+            text = source
 
+    text = text.lstrip("\ufeff")
     non_comment_lines = [
         line for line in text.splitlines() if line.strip() and not line.startswith("#")
     ]
-    if not non_comment_lines:
-        raise ValueError("CSV input contains no header or data rows.")
+    if len(non_comment_lines) < 2:
+        raise ValueError("CSV input must include a header row and at least one data row.")
 
     reader = csv.DictReader(io.StringIO("\n".join(non_comment_lines)))
     if reader.fieldnames is None:
         raise ValueError("CSV header is missing.")
+
+    clean_fieldnames: list[str] = []
+    for raw_col in reader.fieldnames:
+        col_norm = raw_col.lstrip("\ufeff").strip()
+        if col_norm in _PROTO_POLLUTION_KEYS:
+            raise ValueError(f"Rejected forbidden prototype-pollution CSV header: {col_norm!r}")
+        clean_fieldnames.append(col_norm)
+    reader.fieldnames = clean_fieldnames
 
     readings: list[dict[str, Any]] = []
     reports: list[PhysicsValidationReport] = []
@@ -322,7 +384,10 @@ def parse_aez_csv(
         row_dict["lab_poxc_mg_kg"] = _to_optional_float(
             row.get("lab_poxc_mg_kg"), "lab_poxc_mg_kg"
         )
-        row_dict["lab_method"] = _to_optional_str(row.get("lab_method"))
+        raw_lab_method = _to_optional_str(row.get("lab_method"))
+        row_dict["lab_method"] = (
+            sanitize_spreadsheet_cell(raw_lab_method) if raw_lab_method is not None else None
+        )
         row_dict["passed_hard_gates"] = report.passed_hard_gates
         row_dict["has_warnings"] = report.has_warnings
         readings.append(row_dict)
@@ -334,6 +399,7 @@ def parse_aez_csv(
 def export_safe_csv(df: pd.DataFrame) -> str:
     """Export a DataFrame to CSV with spreadsheet formula-injection neutralization."""
     safe_df = df.copy()
+    safe_df.columns = pd.Index([sanitize_spreadsheet_cell(str(col)) for col in safe_df.columns])
     for col in safe_df.columns:
         if pd.api.types.is_string_dtype(safe_df[col]) or safe_df[col].dtype == object:
             safe_df[col] = safe_df[col].map(

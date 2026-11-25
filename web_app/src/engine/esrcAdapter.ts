@@ -3,9 +3,11 @@ import type { ECUnit, KUnit, PhysicsValidationReport, SoilReadingInput } from ".
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 export const MAX_UPLOAD_ROWS = 10_000;
+export const MAX_JSON_DEPTH = 32;
 
 const PROTO_POLLUTION_KEYS = new Set(["__proto__", "constructor", "prototype"]);
-const FORMULA_PREFIXES = ["=", "+", "-", "@", "\t", "\r"];
+const FORMULA_PREFIXES = ["=", "+", "-", "@", "\t", "\r", "\n"];
+const TRIMMED_FORMULA_CHARS = ["=", "+", "-", "@"];
 
 const FIELD_ALIASES: Record<string, string> = {
   temperature: "temperature_c",
@@ -74,10 +76,46 @@ export interface ParsedEsrcRecord {
 }
 
 export function sanitizeSpreadsheetCell(value: string): string {
-  if (value.length > 0 && FORMULA_PREFIXES.some((prefix) => value.startsWith(prefix))) {
+  if (value.length === 0) return value;
+  const trimmed = value.trimStart();
+  if (
+    FORMULA_PREFIXES.some((prefix) => value.startsWith(prefix)) ||
+    TRIMMED_FORMULA_CHARS.some((prefix) => trimmed.startsWith(prefix))
+  ) {
     return `'${value}`;
   }
   return value;
+}
+
+export function assertMaxJsonDepth(rawJson: string, maxDepth = MAX_JSON_DEPTH): void {
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = 0; i < rawJson.length; i++) {
+    const ch = rawJson[i];
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (ch === "\\") {
+        escaped = true;
+      } else if (ch === '"') {
+        inString = false;
+      }
+      continue;
+    }
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+    if (ch === "{" || ch === "[") {
+      depth++;
+      if (depth > maxDepth) {
+        throw new Error(`JSON nesting depth exceeds maximum allowed depth of ${maxDepth}.`);
+      }
+    } else if (ch === "}" || ch === "]") {
+      if (depth > 0) depth--;
+    }
+  }
 }
 
 function isPlainRecord(val: unknown): val is Record<string, unknown> {
@@ -130,6 +168,7 @@ export function parseSafeJsonPayload(
   if (byteLength > maxBytes) {
     throw new Error(`JSON payload exceeds max allowed size of ${maxBytes} bytes.`);
   }
+  assertMaxJsonDepth(rawJson, MAX_JSON_DEPTH);
   assertNoUnquotedNonFiniteLiterals(rawJson);
 
   const strippedKeys: string[] = [];
@@ -290,22 +329,30 @@ export function normalizeEsrcRecord(
   const rawSite = toOptionalString(mapped.site_id);
   const rawDevice = toOptionalString(mapped.device_id);
   const cropRaw = toOptionalString(mapped.crop);
-  const depthCm = toOptionalString(mapped.depth_cm);
+  const aezRaw = toOptionalString(mapped.aez_zone);
+  const depthRaw = toOptionalString(mapped.depth_cm);
+  const textureRaw = toOptionalString(mapped.texture_class);
+  const safeSite = rawSite !== null ? sanitizeSpreadsheetCell(rawSite) : null;
+  const safeDevice = rawDevice !== null ? sanitizeSpreadsheetCell(rawDevice) : null;
+  const safeCrop = cropRaw !== null ? sanitizeSpreadsheetCell(cropRaw) : null;
+  const safeAez = aezRaw !== null ? sanitizeSpreadsheetCell(aezRaw) : null;
+  const safeDepth = depthRaw !== null ? sanitizeSpreadsheetCell(depthRaw) : null;
+  const safeTexture = textureRaw !== null ? sanitizeSpreadsheetCell(textureRaw) : null;
   let depthMid = toOptionalFloat(mapped.depth_mid_cm, "depth_mid_cm");
   if (depthMid === null) {
-    depthMid = parseDepthMidpoint(depthCm);
+    depthMid = parseDepthMidpoint(depthRaw);
   }
 
   const reading: SoilReadingInput = {
-    site_id: rawSite !== null ? sanitizeSpreadsheetCell(rawSite) : null,
-    device_id: rawDevice !== null ? sanitizeSpreadsheetCell(rawDevice) : null,
+    site_id: safeSite,
+    device_id: safeDevice,
     raw_site_id: rawSite,
     raw_device_id: rawDevice,
     timestamp: validateIsoTimestamp(toOptionalString(mapped.timestamp)),
-    aez_zone: toOptionalString(mapped.aez_zone),
+    aez_zone: safeAez,
     lat: toOptionalFloat(mapped.lat, "lat"),
     lon: toOptionalFloat(mapped.lon, "lon"),
-    depth_cm: depthCm,
+    depth_cm: safeDepth,
     depth_mid_cm: depthMid,
     nitrogen_mg_kg: toOptionalFloat(mapped.nitrogen_mg_kg, "nitrogen_mg_kg"),
     phosphorus_mg_kg: toOptionalFloat(mapped.phosphorus_mg_kg, "phosphorus_mg_kg"),
@@ -323,13 +370,14 @@ export function normalizeEsrcRecord(
     sand_pct: toOptionalFloat(mapped.sand_pct, "sand_pct"),
     silt_pct: toOptionalFloat(mapped.silt_pct, "silt_pct"),
     clay_pct: toOptionalFloat(mapped.clay_pct, "clay_pct"),
-    texture_class: toOptionalString(mapped.texture_class),
-    crop: cropRaw !== null ? sanitizeSpreadsheetCell(cropRaw) : null,
+    texture_class: safeTexture,
+    crop: safeCrop,
   };
 
   const labSocPct = toOptionalFloat(rawRecord.lab_soc_pct, "lab_soc_pct");
   const labPoxcMgKg = toOptionalFloat(rawRecord.lab_poxc_mg_kg, "lab_poxc_mg_kg");
-  const labMethod = toOptionalString(rawRecord.lab_method);
+  const rawLabMethod = toOptionalString(rawRecord.lab_method);
+  const labMethod = rawLabMethod !== null ? sanitizeSpreadsheetCell(rawLabMethod) : null;
   const report = validateSoilReading(reading, { socPct: labSocPct });
 
   return {
@@ -380,59 +428,102 @@ export function parseEsrcJson(
 }
 
 function parseCsvRows(text: string, maxRows: number): { headers: string[]; rows: Record<string, string>[] } {
-  const lines = text
-    .split(/\r?\n/)
-    .filter((line) => line.trim().length > 0 && !line.trimStart().startsWith("#"));
+  // Strip UTF-8 BOM at start of text
+  const cleanText = text.startsWith("\uFEFF") ? text.slice(1) : text;
 
-  if (lines.length < 2) {
+  const parsedRows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentCell = "";
+  let inQuotes = false;
+  let atLineStart = true;
+  let isCommentLine = false;
+
+  for (let i = 0; i < cleanText.length; i++) {
+    const ch = cleanText[i]!;
+
+    if (isCommentLine) {
+      if (ch === "\n") {
+        isCommentLine = false;
+        atLineStart = true;
+      }
+      continue;
+    }
+
+    if (inQuotes) {
+      if (ch === '"') {
+        if (cleanText[i + 1] === '"') {
+          currentCell += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        currentCell += ch;
+      }
+      continue;
+    }
+
+    if (atLineStart && currentRow.length === 0 && currentCell.length === 0) {
+      if (ch === "#") {
+        isCommentLine = true;
+        continue;
+      }
+      if (ch === "\r" || ch === "\n") {
+        continue;
+      }
+    }
+    atLineStart = false;
+
+    if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      currentRow.push(currentCell.trim());
+      currentCell = "";
+    } else if (ch === "\r" || ch === "\n") {
+      if (ch === "\r" && cleanText[i + 1] === "\n") {
+        i++;
+      }
+      currentRow.push(currentCell.trim());
+      if (currentRow.some((cell) => cell.length > 0)) {
+        parsedRows.push(currentRow);
+        if (parsedRows.length - 1 > maxRows) {
+          throw new Error(`CSV exceeds maximum allowed row count (${maxRows}).`);
+        }
+      }
+      currentRow = [];
+      currentCell = "";
+      atLineStart = true;
+    } else {
+      currentCell += ch;
+    }
+  }
+
+  if (inQuotes) {
+    throw new Error("Malformed CSV: unterminated quoted field.");
+  }
+  if (currentCell.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentCell.trim());
+    if (currentRow.some((cell) => cell.length > 0)) {
+      parsedRows.push(currentRow);
+    }
+  }
+
+  if (parsedRows.length < 2) {
     throw new Error("CSV must include a header row and at least one data row.");
   }
 
-  const splitLine = (line: string): string[] => {
-    const cells: string[] = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (inQuotes) {
-        if (ch === '"' && line[i + 1] === '"') {
-          current += '"';
-          i++;
-        } else if (ch === '"') {
-          inQuotes = false;
-        } else {
-          current += ch;
-        }
-      } else if (ch === '"') {
-        inQuotes = true;
-      } else if (ch === ",") {
-        cells.push(current.trim());
-        current = "";
-      } else {
-        current += ch;
-      }
-    }
-    cells.push(current.trim());
-    return cells;
-  };
-
-  const headerLine = lines[0];
-  if (!headerLine) {
-    throw new Error("CSV header row is missing.");
-  }
-  const headers = splitLine(headerLine).map((h) => h.replace(/^\uFEFF/, ""));
+  const headerCells = parsedRows[0]!;
+  const headers = headerCells.map((h) => h.replace(/^\uFEFF/, "").trim().replace(/^\uFEFF/, ""));
   if (headers.some((h) => PROTO_POLLUTION_KEYS.has(h))) {
     throw new Error("CSV header contains forbidden prototype-pollution column name.");
   }
 
-  const dataLines = lines.slice(1);
-  if (dataLines.length > maxRows) {
+  const dataRows = parsedRows.slice(1);
+  if (dataRows.length > maxRows) {
     throw new Error(`CSV exceeds maximum allowed row count (${maxRows}).`);
   }
 
-  const rows: Record<string, string>[] = [];
-  for (const dataLine of dataLines) {
-    const values = splitLine(dataLine);
+  const rows: Record<string, string>[] = dataRows.map((values) => {
     const rowObj: Record<string, string> = {};
     for (let idx = 0; idx < headers.length; idx++) {
       const headerName = headers[idx];
@@ -440,8 +531,8 @@ function parseCsvRows(text: string, maxRows: number): { headers: string[]; rows:
         rowObj[headerName] = values[idx] ?? "";
       }
     }
-    rows.push(rowObj);
-  }
+    return rowObj;
+  });
 
   return { headers, rows };
 }
