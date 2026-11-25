@@ -1,0 +1,98 @@
+definitions:
+  caches:
+    pip-cache: ~/.cache/pip
+    npm-cache: ~/.npm
+
+  steps:
+    - step: &python-verify
+        name: Python ML Core, Guardrails & Security
+        image: python:3.12-slim
+        caches:
+          - pip-cache
+        script:
+          - python -m pip install --upgrade pip
+          - pip install -e ".[dev]"
+          - python scripts/fetch_datasets.py --skip-kaggle
+          - |
+            if [ -n "${KAGGLE_USERNAME:-}" ] && [ -n "${KAGGLE_KEY:-}" ]; then
+              python scripts/fetch_datasets.py
+            fi
+          - ruff check ml_core scripts tests
+          - mypy ml_core scripts tests
+          - pytest -v
+          - pip-audit
+
+    - step: &web-verify-and-build
+        name: Web PWA Typecheck, Vitest, Parity & Build
+        image: node:22-bookworm-slim
+        caches:
+          - npm-cache
+        script:
+          - |
+            root_sha="$(sha256sum models/registry.json | awk '{print $1}')"
+            web_sha="$(sha256sum web_app/public/models/registry.json | awk '{print $1}')"
+            test "${root_sha}" = "${web_sha}"
+          - cd web_app
+          - npm ci
+          - npx tsc --noEmit
+          - npx vitest run
+          - npm run build
+        artifacts:
+          - web_app/dist/**
+
+    - step: &package-downloads
+        name: Package Release Zip & SHA256SUMS for Bitbucket Downloads
+        image: node:22-bookworm-slim
+        script:
+          - apt-get update && apt-get install -y --no-install-recommends zip curl ca-certificates && rm -rf /var/lib/apt/lists/*
+          - SHORT_SHA="$(printf '%.7s' "${BITBUCKET_COMMIT:-local}")"
+          - VERSION_TAG="${BITBUCKET_TAG:-main-${SHORT_SHA}}"
+          - mkdir -p release_assets
+          - (cd web_app/dist && zip -qr "../../release_assets/somsense-${VERSION_TAG}-web-dist.zip" .)
+          - tar -C web_app/dist -czf "release_assets/somsense-${VERSION_TAG}-web-dist.tar.gz" .
+          - cp models/registry.json "release_assets/somsense-${VERSION_TAG}-models-registry.json"
+          - cp models/artifacts_manifest.json "release_assets/somsense-${VERSION_TAG}-models-manifest.json"
+          - |
+            (
+              cd release_assets
+              sha256sum \
+                "somsense-${VERSION_TAG}-web-dist.zip" \
+                "somsense-${VERSION_TAG}-web-dist.tar.gz" \
+                "somsense-${VERSION_TAG}-models-registry.json" \
+                "somsense-${VERSION_TAG}-models-manifest.json" > SHA256SUMS
+              sha256sum -c SHA256SUMS
+            )
+          - |
+            if [ -n "${BITBUCKET_ACCESS_TOKEN:-}" ]; then
+              echo "Uploading packaged bundle to Bitbucket Downloads via BITBUCKET_ACCESS_TOKEN..."
+              for asset in \
+                "release_assets/somsense-${VERSION_TAG}-web-dist.zip" \
+                "release_assets/somsense-${VERSION_TAG}-web-dist.tar.gz" \
+                "release_assets/SHA256SUMS"; do
+                curl --fail --silent --show-error -X POST \
+                  -H "Authorization: Bearer ${BITBUCKET_ACCESS_TOKEN}" \
+                  -F "files=@${asset}" \
+                  "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_FULL_NAME}/downloads"
+              done
+            else
+              echo "BITBUCKET_ACCESS_TOKEN not configured; retaining bundle as pipeline artifacts."
+            fi
+        artifacts:
+          - release_assets/**
+
+pipelines:
+  default:
+    - step: *python-verify
+    - step: *web-verify-and-build
+
+  branches:
+    main:
+      - step: *python-verify
+      - step: *web-verify-and-build
+      - step: *package-downloads
+
+  tags:
+    "v*":
+      - step: *python-verify
+      - step: *web-verify-and-build
+      - step: *package-downloads

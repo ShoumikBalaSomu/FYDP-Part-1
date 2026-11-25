@@ -5,7 +5,7 @@ Scope: `docs/01_BACKGROUND_STUDY.md`, `docs/02_PRODUCT_MENTAL_MODEL.md`, `docs/0
 
 ## Gate 1 Sign-Off: Background Study and Historical Bug Audit
 
-- **Artifact**: [01_BACKGROUND_STUDY.md](file:///home/krishna/Git%20Projects/FYDP/docs/01_BACKGROUND_STUDY.md)
+- **Artifact**: [01_BACKGROUND_STUDY.md](01_BACKGROUND_STUDY.md)
 - **Status**: SIGNED OFF
 - **Workspace Evidence Checked**:
   - `data/raw/srdi_kushtia/Supplementary_Data_S10.csv` verified at `171` rows across `57` unique `Sample_ID` grid points and three depths (`0-20`, `20-40`, `40-60 cm`), `OM_pct` spanning `1.2%` to `2.7%` (mean `1.5749%`), `K_cmol_kg` spanning `0.07` to `0.46`, and `TN_pct` correlating with `OM_pct` at `r = 0.9776` (`TN = 0.0492 * OM - 0.0065`).
@@ -17,7 +17,7 @@ Scope: `docs/01_BACKGROUND_STUDY.md`, `docs/02_PRODUCT_MENTAL_MODEL.md`, `docs/0
 
 ## Gate 2 Sign-Off: Product Mental Model, State Machine, and User Journeys
 
-- **Artifact**: [02_PRODUCT_MENTAL_MODEL.md](file:///home/krishna/Git%20Projects/FYDP/docs/02_PRODUCT_MENTAL_MODEL.md)
+- **Artifact**: [02_PRODUCT_MENTAL_MODEL.md](02_PRODUCT_MENTAL_MODEL.md)
 - **Status**: SIGNED OFF
 - **Coverage Verified**:
   - Deterministic six-gate prediction pipeline enforcing `Dr. Fizar Ahmed`'s separation between direct probe electrical readings, calibrated `%SOC`/`%OM`, and isolated `POXC (mg C/kg dry soil)` with `Passive C != Total SOC - POXC`.
@@ -28,8 +28,8 @@ Scope: `docs/01_BACKGROUND_STUDY.md`, `docs/02_PRODUCT_MENTAL_MODEL.md`, `docs/0
 ## Gate 3 Sign-Off: System Architecture, Upgrades, and Schema Contracts
 
 - **Artifacts**:
-  - [03_ARCHITECTURE_AND_INNOVATION.md](file:///home/krishna/Git%20Projects/FYDP/docs/03_ARCHITECTURE_AND_INNOVATION.md)
-  - [model_registry_schema.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/model_registry_schema.json)
+  - [03_ARCHITECTURE_AND_INNOVATION.md](03_ARCHITECTURE_AND_INNOVATION.md)
+  - [model_registry_schema.json](contracts/model_registry_schema.json)
 - **Status**: SIGNED OFF
 - **Coverage Verified**:
   - Two-tier zero-backend architecture diagram (`flowchart TB`) verified with quoted Mermaid labels and zero HTML tags.

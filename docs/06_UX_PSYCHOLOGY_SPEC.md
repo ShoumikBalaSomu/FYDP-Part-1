@@ -4,7 +4,7 @@
 
 SOMSense serves soil researchers at the Environmental Sustainability Research Center (ESRC) and field technicians checking plots across Cumilla and Kushtia. Bright white panels strain eyes during evening lab calibration. Faint dashboards fail outdoors. Our interface pairs a warm limestone light theme (`#F7F6F2` canvas, `#141C17` loam slate ink, `#156D47` forest emerald accent) with a redesigned charcoal lab theme (`#0F1512` canvas, `#17201B` card surface, `#EDF2EE` bone text, `#34D399` sage accent) across three tabs using `IBM Plex Sans`, `IBM Plex Mono`, and `Noto Sans Bengali` fallback. No purple-blue gradients appear anywhere, and every alert pairs geometric SVG iconography with plain text.
 
-Theme tokens, touch dimensions, preset payloads, and all 420 UI strings live in [ui_copy_and_tokens.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/ui_copy_and_tokens.json). Inference weights and safety limits bind directly to [model_registry_schema.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/model_registry_schema.json).
+Theme tokens, touch dimensions, preset payloads, and all 420 UI strings live in [ui_copy_and_tokens.json](contracts/ui_copy_and_tokens.json). Inference weights and safety limits bind directly to [model_registry_schema.json](contracts/model_registry_schema.json).
 
 ---
 

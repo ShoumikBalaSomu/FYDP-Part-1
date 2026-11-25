@@ -1,0 +1,634 @@
+{
+  "srdi_kushtia_om_champion": [
+    {
+      "row_index": 0,
+      "sample": {
+        "ph": 7.8,
+        "phosphorus_mg_kg": 22.5,
+        "potassium_mg_kg": 89.93,
+        "moisture_pct": 36.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 2.1767002537321822,
+        "ci_low": 1.4291183237321823,
+        "ci_high": 2.924282183732182,
+        "domain_status": "In-Range",
+        "d2": 10.184735101261223
+      }
+    },
+    {
+      "row_index": 1,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 23.2,
+        "potassium_mg_kg": 97.75,
+        "moisture_pct": 38.4,
+        "depth_mid_cm": 30.0
+      },
+      "expected": {
+        "point": 1.7579491112733672,
+        "ci_low": 1.0103671812733672,
+        "ci_high": 2.5055310412733673,
+        "domain_status": "In-Range",
+        "d2": 6.680793404445322
+      }
+    },
+    {
+      "row_index": 2,
+      "sample": {
+        "ph": 7.4,
+        "phosphorus_mg_kg": 12.5,
+        "potassium_mg_kg": 66.47,
+        "moisture_pct": 42.0,
+        "depth_mid_cm": 50.0
+      },
+      "expected": {
+        "point": 1.7940232231237803,
+        "ci_low": 1.0464412931237803,
+        "ci_high": 2.54160515312378,
+        "domain_status": "In-Range",
+        "d2": 2.5333665464646598
+      }
+    },
+    {
+      "row_index": 15,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 22.9,
+        "potassium_mg_kg": 148.58,
+        "moisture_pct": 12.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.9395483043138653,
+        "ci_low": 1.1919663743138653,
+        "ci_high": 2.687130234313865,
+        "domain_status": "In-Range",
+        "d2": 9.312034817958878
+      }
+    },
+    {
+      "row_index": 42,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 16.8,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 60.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.7811478238427312,
+        "ci_low": 1.0335658938427312,
+        "ci_high": 2.528729753842731,
+        "domain_status": "In-Range",
+        "d2": 8.32260909103065
+      }
+    },
+    {
+      "row_index": 85,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 38.7,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 36.0,
+        "depth_mid_cm": 30.0
+      },
+      "expected": {
+        "point": 1.492495226248985,
+        "ci_low": 0.7449132962489851,
+        "ci_high": 2.2400771562489847,
+        "domain_status": "Outside Calibration Range",
+        "d2": 29.16098985920133
+      }
+    },
+    {
+      "row_index": 120,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 12.9,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 27.6,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.6729577873775376,
+        "ci_low": 0.9253758573775377,
+        "ci_high": 2.4205397173775376,
+        "domain_status": "In-Range",
+        "d2": 4.673749919879109
+      }
+    },
+    {
+      "row_index": 170,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 5.3,
+        "potassium_mg_kg": 46.92,
+        "moisture_pct": 63.6,
+        "depth_mid_cm": 50.0
+      },
+      "expected": {
+        "point": 1.544518881739326,
+        "ci_low": 0.7969369517393261,
+        "ci_high": 2.292100811739326,
+        "domain_status": "In-Range",
+        "d2": 4.436805462133688
+      }
+    }
+  ],
+  "srdi_kushtia_om_baseline_ols": [
+    {
+      "row_index": 0,
+      "sample": {
+        "ph": 7.8,
+        "phosphorus_mg_kg": 22.5,
+        "potassium_mg_kg": 89.93,
+        "moisture_pct": 36.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.8700047753304503,
+        "ci_low": 1.1148421953304504,
+        "ci_high": 2.62516735533045,
+        "domain_status": "In-Range",
+        "d2": 10.184735101261223
+      }
+    },
+    {
+      "row_index": 1,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 23.2,
+        "potassium_mg_kg": 97.75,
+        "moisture_pct": 38.4,
+        "depth_mid_cm": 30.0
+      },
+      "expected": {
+        "point": 1.723141641416144,
+        "ci_low": 0.967979061416144,
+        "ci_high": 2.478304221416144,
+        "domain_status": "In-Range",
+        "d2": 6.680793404445322
+      }
+    },
+    {
+      "row_index": 2,
+      "sample": {
+        "ph": 7.4,
+        "phosphorus_mg_kg": 12.5,
+        "potassium_mg_kg": 66.47,
+        "moisture_pct": 42.0,
+        "depth_mid_cm": 50.0
+      },
+      "expected": {
+        "point": 1.5550285556270995,
+        "ci_low": 0.7998659756270995,
+        "ci_high": 2.3101911356270994,
+        "domain_status": "In-Range",
+        "d2": 2.5333665464646598
+      }
+    },
+    {
+      "row_index": 15,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 22.9,
+        "potassium_mg_kg": 148.58,
+        "moisture_pct": 12.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.9347865728791767,
+        "ci_low": 1.1796239928791765,
+        "ci_high": 2.689949152879177,
+        "domain_status": "In-Range",
+        "d2": 9.312034817958878
+      }
+    },
+    {
+      "row_index": 42,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 16.8,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 60.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.5993192348489182,
+        "ci_low": 0.8441566548489182,
+        "ci_high": 2.3544818148489184,
+        "domain_status": "In-Range",
+        "d2": 8.32260909103065
+      }
+    },
+    {
+      "row_index": 85,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 38.7,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 36.0,
+        "depth_mid_cm": 30.0
+      },
+      "expected": {
+        "point": 1.8062540024743314,
+        "ci_low": 1.0510914224743315,
+        "ci_high": 2.5614165824743313,
+        "domain_status": "Outside Calibration Range",
+        "d2": 29.16098985920133
+      }
+    },
+    {
+      "row_index": 120,
+      "sample": {
+        "ph": 7.3,
+        "phosphorus_mg_kg": 12.9,
+        "potassium_mg_kg": 54.74,
+        "moisture_pct": 27.6,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.5259451330667249,
+        "ci_low": 0.7707825530667248,
+        "ci_high": 2.2811077130667248,
+        "domain_status": "In-Range",
+        "d2": 4.673749919879109
+      }
+    },
+    {
+      "row_index": 170,
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": 5.3,
+        "potassium_mg_kg": 46.92,
+        "moisture_pct": 63.6,
+        "depth_mid_cm": 50.0
+      },
+      "expected": {
+        "point": 1.4371541832864694,
+        "ci_low": 0.6819916032864694,
+        "ci_high": 2.1923167632864695,
+        "domain_status": "In-Range",
+        "d2": 4.436805462133688
+      }
+    }
+  ],
+  "kaggle_mineral_oc_benchmark": [
+    {
+      "row_index": 0,
+      "sample": {
+        "nitrogen_mg_kg": 138.0,
+        "phosphorus_mg_kg": 8.6,
+        "potassium_mg_kg": 560.0,
+        "ph": 7.46,
+        "ec_ds_m": 0.62
+      },
+      "expected": {
+        "point": 0.6003018288797716,
+        "ci_low": 0.07679624887977154,
+        "ci_high": 1.1238074088797716,
+        "domain_status": "In-Range",
+        "d2": 2.729303737010871
+      }
+    },
+    {
+      "row_index": 10,
+      "sample": {
+        "nitrogen_mg_kg": 151.0,
+        "phosphorus_mg_kg": 8.1,
+        "potassium_mg_kg": 549.0,
+        "ph": 7.59,
+        "ec_ds_m": 0.45
+      },
+      "expected": {
+        "point": 0.6083383803808429,
+        "ci_low": 0.08483280038084284,
+        "ci_high": 1.1318439603808428,
+        "domain_status": "In-Range",
+        "d2": 2.4416509614164585
+      }
+    },
+    {
+      "row_index": 100,
+      "sample": {
+        "nitrogen_mg_kg": 188.0,
+        "phosphorus_mg_kg": 5.0,
+        "potassium_mg_kg": 454.0,
+        "ph": 7.6,
+        "ec_ds_m": 0.74
+      },
+      "expected": {
+        "point": 0.5903998178937239,
+        "ci_low": 0.06689423789372384,
+        "ci_high": 1.113905397893724,
+        "domain_status": "In-Range",
+        "d2": 2.7978014318615783
+      }
+    },
+    {
+      "row_index": 350,
+      "sample": {
+        "nitrogen_mg_kg": 213.0,
+        "phosphorus_mg_kg": 7.5,
+        "potassium_mg_kg": 475.0,
+        "ph": 7.16,
+        "ec_ds_m": 0.3
+      },
+      "expected": {
+        "point": 0.6197659304668476,
+        "ci_low": 0.09626035046684756,
+        "ci_high": 1.1432715104668476,
+        "domain_status": "In-Range",
+        "d2": 4.591758938619686
+      }
+    },
+    {
+      "row_index": 600,
+      "sample": {
+        "nitrogen_mg_kg": 276.0,
+        "phosphorus_mg_kg": 81.1,
+        "potassium_mg_kg": 380.0,
+        "ph": 7.71,
+        "ec_ds_m": 0.71
+      },
+      "expected": {
+        "point": 0.591358574870521,
+        "ci_low": 0.06785299487052099,
+        "ci_high": 1.1148641548705212,
+        "domain_status": "In-Range",
+        "d2": 12.166231585247102
+      }
+    },
+    {
+      "row_index": 872,
+      "sample": {
+        "nitrogen_mg_kg": 264.0,
+        "phosphorus_mg_kg": 10.3,
+        "potassium_mg_kg": 475.0,
+        "ph": 7.49,
+        "ec_ds_m": 0.74
+      },
+      "expected": {
+        "point": 0.5759744731748884,
+        "ci_low": 0.05246889317488834,
+        "ci_high": 1.0994800531748883,
+        "domain_status": "In-Range",
+        "d2": 2.0722952046898477
+      }
+    }
+  ],
+  "usda_kssl_poxc_with_soc": [
+    {
+      "row_index": 0,
+      "sample": {
+        "soc_pct": 2.8,
+        "ph": 4.7,
+        "sand_pct": 23.9,
+        "silt_pct": 29.1,
+        "clay_pct": 47.0,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 812.3187530335687,
+        "ci_low": 478.57159602356865,
+        "ci_high": 1146.0659100435687,
+        "domain_status": "Caution",
+        "d2": 17.071700360889068
+      }
+    },
+    {
+      "row_index": 5,
+      "sample": {
+        "soc_pct": 2.46,
+        "ph": 6.1,
+        "sand_pct": 4.2,
+        "silt_pct": 68.5,
+        "clay_pct": 27.3,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 769.4830698857804,
+        "ci_low": 435.7359128757804,
+        "ci_high": 1103.2302268957806,
+        "domain_status": "In-Range",
+        "d2": 2.212899046346305
+      }
+    },
+    {
+      "row_index": 12,
+      "sample": {
+        "soc_pct": 1.44,
+        "ph": 7.3,
+        "sand_pct": 68.4,
+        "silt_pct": 17.0,
+        "clay_pct": 14.6,
+        "depth_mid_cm": 1.5
+      },
+      "expected": {
+        "point": 590.1403007476778,
+        "ci_low": 256.39314373767775,
+        "ci_high": 923.8874577576778,
+        "domain_status": "In-Range",
+        "d2": 3.2302791702116243
+      }
+    },
+    {
+      "row_index": 20,
+      "sample": {
+        "soc_pct": 4.470000000000001,
+        "ph": 5.4,
+        "sand_pct": 55.0,
+        "silt_pct": 37.6,
+        "clay_pct": 7.4,
+        "depth_mid_cm": 14.5
+      },
+      "expected": {
+        "point": 798.0776016812652,
+        "ci_low": 464.3304446712651,
+        "ci_high": 1131.8247586912653,
+        "domain_status": "In-Range",
+        "d2": 5.209763834230682
+      }
+    },
+    {
+      "row_index": 30,
+      "sample": {
+        "soc_pct": 2.818,
+        "ph": 4.6,
+        "sand_pct": 16.3,
+        "silt_pct": 59.5,
+        "clay_pct": 24.2,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 772.106101667695,
+        "ci_low": 438.358944657695,
+        "ci_high": 1105.853258677695,
+        "domain_status": "In-Range",
+        "d2": 2.5963529230803566
+      }
+    },
+    {
+      "row_index": 37,
+      "sample": {
+        "soc_pct": 1.1532,
+        "ph": 6.3,
+        "sand_pct": 32.1,
+        "silt_pct": 55.0,
+        "clay_pct": 12.9,
+        "depth_mid_cm": 6.0
+      },
+      "expected": {
+        "point": 493.0548625334667,
+        "ci_low": 159.30770552346667,
+        "ci_high": 826.8020195434667,
+        "domain_status": "In-Range",
+        "d2": 3.562690385603817
+      }
+    }
+  ],
+  "usda_kssl_poxc_without_soc": [
+    {
+      "row_index": 0,
+      "sample": {
+        "ph": 4.7,
+        "sand_pct": 23.9,
+        "silt_pct": 29.1,
+        "clay_pct": 47.0,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 832.6005953232324,
+        "ci_low": 116.78121294323239,
+        "ci_high": 1548.4199777032322,
+        "domain_status": "Caution",
+        "d2": 16.801766920909287
+      }
+    },
+    {
+      "row_index": 5,
+      "sample": {
+        "ph": 6.1,
+        "sand_pct": 4.2,
+        "silt_pct": 68.5,
+        "clay_pct": 27.3,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 830.6298236536795,
+        "ci_low": 114.81044127367954,
+        "ci_high": 1546.4492060336795,
+        "domain_status": "In-Range",
+        "d2": 2.1856599804195564
+      }
+    },
+    {
+      "row_index": 12,
+      "sample": {
+        "ph": 7.3,
+        "sand_pct": 68.4,
+        "silt_pct": 17.0,
+        "clay_pct": 14.6,
+        "depth_mid_cm": 1.5
+      },
+      "expected": {
+        "point": 719.4602359166665,
+        "ci_low": 3.6408535366665546,
+        "ci_high": 1435.2796182966665,
+        "domain_status": "In-Range",
+        "d2": 3.226082478301306
+      }
+    },
+    {
+      "row_index": 20,
+      "sample": {
+        "ph": 5.4,
+        "sand_pct": 55.0,
+        "silt_pct": 37.6,
+        "clay_pct": 7.4,
+        "depth_mid_cm": 14.5
+      },
+      "expected": {
+        "point": 555.3391833744589,
+        "ci_low": 0.0,
+        "ci_high": 1271.1585657544588,
+        "domain_status": "In-Range",
+        "d2": 3.682342937241641
+      }
+    },
+    {
+      "row_index": 30,
+      "sample": {
+        "ph": 4.6,
+        "sand_pct": 16.3,
+        "silt_pct": 59.5,
+        "clay_pct": 24.2,
+        "depth_mid_cm": 2.5
+      },
+      "expected": {
+        "point": 856.5251705097403,
+        "ci_low": 140.7057881297403,
+        "ci_high": 1572.3445528897403,
+        "domain_status": "In-Range",
+        "d2": 2.30103741285065
+      }
+    },
+    {
+      "row_index": 37,
+      "sample": {
+        "ph": 6.3,
+        "sand_pct": 32.1,
+        "silt_pct": 55.0,
+        "clay_pct": 12.9,
+        "depth_mid_cm": 6.0
+      },
+      "expected": {
+        "point": 564.5814853820347,
+        "ci_low": 0.0,
+        "ci_high": 1280.4008677620345,
+        "domain_status": "In-Range",
+        "d2": 2.939136404782099
+      }
+    }
+  ],
+  "edge_cases": [
+    {
+      "model_id": "srdi_kushtia_om_champion",
+      "name": "missing_p_caution",
+      "sample": {
+        "ph": 7.5,
+        "phosphorus_mg_kg": null,
+        "potassium_mg_kg": 80.0,
+        "moisture_pct": 30.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.8019121980624193,
+        "ci_low": 1.0543302680624194,
+        "ci_high": 2.5494941280624195,
+        "domain_status": "Caution",
+        "d2": 1.7817011477658808
+      }
+    },
+    {
+      "model_id": "srdi_kushtia_om_champion",
+      "name": "acid_sylhet_ood",
+      "sample": {
+        "ph": 4.2,
+        "phosphorus_mg_kg": 4.0,
+        "potassium_mg_kg": 65.0,
+        "moisture_pct": 28.0,
+        "depth_mid_cm": 10.0
+      },
+      "expected": {
+        "point": 1.6044909937602547,
+        "ci_low": 0.8569090637602548,
+        "ci_high": 2.3520729237602547,
+        "domain_status": "Outside Calibration Range",
+        "d2": 442.2048369964456
+      }
+    }
+  ]
+}

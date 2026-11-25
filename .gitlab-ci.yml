@@ -1,0 +1,71 @@
+stages:
+  - test
+  - build
+  - deploy
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.cache/npm"
+
+python_verify:
+  stage: test
+  image: python:3.12-slim
+  cache:
+    key: "pip-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .cache/pip
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -e ".[dev]"
+  script:
+    - python scripts/fetch_datasets.py --skip-kaggle
+    - |
+      if [ -n "${KAGGLE_USERNAME:-}" ] && [ -n "${KAGGLE_KEY:-}" ]; then
+        python scripts/fetch_datasets.py
+      fi
+    - ruff check ml_core scripts tests
+    - mypy ml_core scripts tests
+    - pytest -v
+    - pip-audit
+
+web_verify_and_build:
+  stage: build
+  image: node:22-bookworm-slim
+  cache:
+    key: "npm-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .cache/npm
+  script:
+    - |
+      root_sha="$(sha256sum models/registry.json | awk '{print $1}')"
+      web_sha="$(sha256sum web_app/public/models/registry.json | awk '{print $1}')"
+      test "${root_sha}" = "${web_sha}"
+    - cd web_app
+    - npm ci
+    - npx tsc --noEmit
+    - npx vitest run
+    - npm run build
+    - cd ..
+    - rm -rf public
+    - cp -r web_app/dist public
+  artifacts:
+    paths:
+      - public
+    expire_in: 7 days
+
+pages:
+  stage: deploy
+  dependencies:
+    - web_verify_and_build
+  script:
+    - test -f public/index.html
+    - test -f public/models/registry.json
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'

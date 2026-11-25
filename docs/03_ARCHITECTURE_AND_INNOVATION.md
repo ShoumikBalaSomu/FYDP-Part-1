@@ -2,7 +2,7 @@
 
 ## 1. Two-Tier Zero-Backend Architecture
 
-SOMSense separates offline Python training from static browser execution so field tablets run without cloud servers or ongoing API billing. Research pipelines validate datasets and export portable parameters into `models/registry.json` conforming strictly to [model_registry_schema.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/model_registry_schema.json). Zero servers sit in the middle. Static React and TypeScript assets verify those hashes locally via WebCrypto before running inference directly inside the browser.
+SOMSense separates offline Python training from static browser execution so field tablets run without cloud servers or ongoing API billing. Research pipelines validate datasets and export portable parameters into `models/registry.json` conforming strictly to [model_registry_schema.json](contracts/model_registry_schema.json). Zero servers sit in the middle. Static React and TypeScript assets verify those hashes locally via WebCrypto before running inference directly inside the browser.
 
 ```mermaid
 flowchart TB
@@ -40,7 +40,7 @@ Real telemetry from `ESRC Device - 1` at `cumilla 2` (`pH = 0.12`, `Humidity = 1
 
 ### 2.3 In-Browser Lab CSV Calibration Studio
 
-General soil probes gain local accuracy only when paired with regional laboratory truth. Dr. Fizar's team uploads a paired CSV following `esrc_aez_calibration_template.csv` into browser memory while keeping plot GPS coordinates off external servers. Unit confirmation comes first. The studio enforces explicit declarations (`cmol(+)/kg * 391.0` for SRDI `K`, `uS/cm -> dS/m`, `/ 10` for `g/kg` carbon), rejects `TN_pct` circular leaks automatically, quarantines `SENSOR_FAULT_CRITICAL` rows, groups splits by `site_id` (`GroupKFold`), solves the standardized nine-term Ridge or OLS equation via stable QR decomposition in TypeScript, estimates empirical conformal `q_095`, computes regularized Mahalanobis `inv_cov` bounds, and saves a `ModelEntry` conforming to [model_registry_schema.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/model_registry_schema.json).
+General soil probes gain local accuracy only when paired with regional laboratory truth. Dr. Fizar's team uploads a paired CSV following `esrc_aez_calibration_template.csv` into browser memory while keeping plot GPS coordinates off external servers. Unit confirmation comes first. The studio enforces explicit declarations (`cmol(+)/kg * 391.0` for SRDI `K`, `uS/cm -> dS/m`, `/ 10` for `g/kg` carbon), rejects `TN_pct` circular leaks automatically, quarantines `SENSOR_FAULT_CRITICAL` rows, groups splits by `site_id` (`GroupKFold`), solves the standardized nine-term Ridge or OLS equation via stable QR decomposition in TypeScript, estimates empirical conformal `q_095`, computes regularized Mahalanobis `inv_cov` bounds, and saves a `ModelEntry` conforming to [model_registry_schema.json](contracts/model_registry_schema.json).
 
 ### 2.4 Publication and Extension Report Exporter
 
@@ -65,7 +65,7 @@ Upland Bangladesh agronomic guidelines classify soil organic matter across five 
 
 ### 4.1 Model Registry JSON Contract (`models/registry.json`)
 
-The canonical JSON Schema lives at [model_registry_schema.json](file:///home/krishna/Git%20Projects/FYDP/docs/contracts/model_registry_schema.json) (`Draft 2020-12`). Every registry document declares `authority_protocol` (`k = 1.724`, `forbid_direct_sensor_om: true`, `forbid_passive_c_subtraction: true`), `hardware_physics_guardrails` matching `soil-physics-validator`, `models` keyed by lowercase track ID, `leakage_and_quality_audits`, and `integrity`. Hashes guard every build. Integrity verification hashes the compact UTF-8 JSON representation of all root keys excluding `integrity` (`sort_keys=True`, `separators=(",", ":")`) with `SHA-256` into `integrity.canonical_payload_sha256`, while each `ModelEntry` carries its own deterministic `artifact_sha256`. Any model failing `beats_ols_baseline` on held-out `GroupKFold` sites stays marked `baseline_ols`, `benchmark_reference`, or `rejected_under_baseline` rather than `selected_champion`.
+The canonical JSON Schema lives at [model_registry_schema.json](contracts/model_registry_schema.json) (`Draft 2020-12`). Every registry document declares `authority_protocol` (`k = 1.724`, `forbid_direct_sensor_om: true`, `forbid_passive_c_subtraction: true`), `hardware_physics_guardrails` matching `soil-physics-validator`, `models` keyed by lowercase track ID, `leakage_and_quality_audits`, and `integrity`. Hashes guard every build. Integrity verification hashes the compact UTF-8 JSON representation of all root keys excluding `integrity` (`sort_keys=True`, `separators=(",", ":")`) with `SHA-256` into `integrity.canonical_payload_sha256`, while each `ModelEntry` carries its own deterministic `artifact_sha256`. Any model failing `beats_ols_baseline` on held-out `GroupKFold` sites stays marked `baseline_ols`, `benchmark_reference`, or `rejected_under_baseline` rather than `selected_champion`.
 
 ### 4.2 ESRC IoT Telemetry JSON Contract (`ESRC Device - 1`)
 
@@ -73,7 +73,7 @@ Incoming JSON telemetry from `iot.websoftbd.net` or manual technician pastes acc
 
 ### 4.3 ESRC AEZ Paired Calibration CSV Contract
 
-Lab calibration uploads follow the 22-column structure verified in [esrc_aez_calibration_template.csv](file:///home/krishna/Git%20Projects/FYDP/data/templates/esrc_aez_calibration_template.csv), enforcing upload limits (`<= 10 MB`, `<= 10000` rows) and blocking `TN_pct` circular leaks (`r = 0.9776` in Kushtia).
+Lab calibration uploads follow the 22-column structure verified in [esrc_aez_calibration_template.csv](../data/templates/esrc_aez_calibration_template.csv), enforcing upload limits (`<= 10 MB`, `<= 10000` rows) and blocking `TN_pct` circular leaks (`r = 0.9776` in Kushtia).
 
 | Column | Type | Canonical Unit / Format | Validation & Physics Rule |
 | :--- | :--- | :--- | :--- |
