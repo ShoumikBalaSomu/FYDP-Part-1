@@ -1,0 +1,8 @@
+# STRICTLY FOR AUTOMATED UNIT/CI SCHEMA VALIDATION TESTS ONLY - NEVER FOR SCIENTIFIC CLAIMS
+site_id,aez_zone,lat,lon,depth_cm,timestamp,N,P,K,pH,EC,Salinity,Temp_C,Moisture_pct,texture_class,crop,days_since_rain,days_since_fertilizer,lab_soc_pct,lab_method,lab_poxc_mg_kg,sensor_model
+fixture_site_a,AEZ-19,23.46,91.18,0-15,2026-09-15T09:00:00Z,185,18.4,192,6.4,0.48,307,27.2,32.0,Loam,Boro Rice,6,14,1.15,Walkley-Black,480,ESRC Device - 1 (Fixture)
+fixture_site_b,AEZ-19,23.47,91.19,0-15,2026-09-15T09:15:00Z,220,24.1,210,6.8,0.61,390,26.8,36.5,Clay Loam,Aus Rice,5,18,1.42,Walkley-Black,595,ESRC Device - 1 (Fixture)
+fixture_site_c,AEZ-11,23.85,89.01,0-20,2026-09-16T10:00:00Z,142,14.2,165,7.4,0.52,333,28.1,24.0,Silty Clay,Wheat,9,22,0.92,Walkley-Black,390,ESRC Device - 1 (Fixture)
+fixture_site_d,AEZ-11,23.86,89.02,0-20,2026-09-16T10:30:00Z,260,31.0,245,6.9,0.72,461,25.9,41.0,Clay,Jute,4,12,1.65,Walkley-Black,710,ESRC Device - 1 (Fixture)
+fixture_site_e,AEZ-15,24.11,90.41,0-15,2026-09-17T08:45:00Z,165,15.8,178,5.9,0.39,250,27.5,28.5,Sandy Loam,Potato,7,20,0.81,Walkley-Black,340,ESRC Device - 1 (Fixture)
+fixture_site_f,AEZ-15,24.12,90.42,0-15,2026-09-17T09:00:00Z,240,26.5,230,6.3,0.58,371,26.4,38.0,Clay Loam,Tomato,5,15,1.51,Walkley-Black,640,ESRC Device - 1 (Fixture)

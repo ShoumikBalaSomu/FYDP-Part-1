@@ -1,0 +1,43 @@
+Layer_ID,KSSL_Sample_ID,Previoius KSSL POXC,pH,Sand,Silt,Clay,SOC,Pedon_ID,State / Territory Code,County,Taxonomic Classification,Order,Horizon Designation,Top,Bottom,Latitude,Longitude
+04N03382,64511,1182,4.7,23.9,29.1,47,28,04N0610,PR,Cabo Rojo,"Very-fine, mixed, semiactive, isohyperthermic Aquic Paleudult",ULTISOLS,Ap,0,5,18.09583333,-67.14222222
+06N00457,88187,253,8.5,82.8,12.7,4.5,2.996,06N0145,UT,Grand,"Coarse-loamy, mixed, superactive, mesic Ustic Haplocambids",ARIDISOLS,A2,2,5,38.815403,-109.6835098
+08N03512,116519,528,8.4,27.1,33.7,39.2,12.864,08N0555,PR,Salinas,"Fine, mixed, superactive, isohyperthermic Sodic Haplustert",VERTISOLS,Ap,0,15,17.96026944,-66.24649722
+09N04701,129404,2182,5.3,9.3,53.1,37.6,75.8,09N1171,OR,Yamhill,"Fine-loamy, isotic, mesic Andic Dystrudept",INCEPTISOLS,Ac,2,12,45.28951389,-123.358175
+10N00304,130205,182,7.1,62.9,20.7,16.4,6.9,10N0084,TX,Hockley,"Fine-loamy, mixed, superactive, thermic Aridic Paleustalfs",ALFISOLS,A3,14,22,33.6569176,-102.2061462
+10N00543,130730,551,6.1,4.2,68.5,27.3,24.6,10N0138,NE,Saline,"Fine-silty, mixed, superactive, mesic Cumulic Haplustolls",MOLLISOLS,Ap1,0,5,40.6915,-97.0209444
+10N00547,130734,587,5.7,4.6,68.6,26.8,25.7,10N0139,NE,Saline,"Fine-silty, mixed, superactive, mesic Cumulic Haplustolls",MOLLISOLS,Ap1,0,5,40.6916111,-97.0211389
+10N00551,130738,587,7.3,1.9,70.2,27.9,25.92,10N0140,NE,Lancaster,"Fine-silty, mixed, superactive, mesic Cumulic Hapludolls",MOLLISOLS,Ap1,0,5,40.8506389,-96.4649722
+10N01396,131907,NA,5.4,NA,NA,22.7,13.6,10N0334,NE,Lancaster,"Fine-silty, mixed, superactive, mesic Cumulic Hapludoll",MOLLISOLS,Ap1,0,5,40.98455556,-96.79072222
+10N01397,131908,NA,6.8,NA,NA,23.1,8.3,10N0334,NE,Lancaster,"Fine-silty, mixed, superactive, mesic Cumulic Hapludoll",MOLLISOLS,Ap2,5,19,40.98455556,-96.79072222
+10N02474,134599,73,8.2,79.3,8.9,11.8,3.484,10N0578,AZ,Apache,"Sandy, mixed, mesic Typic Torriorthent",ENTISOLS,Ap2,8,43,35.23749,-109.52295
+10N02598,134723,384,7.6,43.4,36.4,20.2,14.896,10N0603,AZ,Apache,"Fine-loamy, mixed, superactive, mesic Pachic Haplustoll",MOLLISOLS,Ap,0,28,35.23749,-109.52295
+10N04527,138973,557,7.1,27.2,43.3,29.5,17.2,10N0957,CO,Washington,"Fine, smectitic, mesic Aridic Argiustolls",MOLLISOLS,Ap,0,5,39.6685833,-103.1410278
+10N05881,141632,327,7.3,68.4,17,14.6,14.4,10N1209,TX,Hockley,"Fine-loamy, mixed, superactive, thermic Aridic Paleustalf",ALFISOLS,Ap,0,3,33.62848056,-102.5159306
+10N05884,141635,510,7.4,67.9,15.6,16.5,13,10N1210,TX,Hockley,"Fine-loamy, mixed, superactive, thermic Aridic Paleustalf",ALFISOLS,Ap1,0,3,33.62848056,-102.5158389
+10N05911,141724,254,7.3,76.8,10.9,12.3,5,10N1217,TX,Hockley,"Fine-loamy, mixed, superactive, thermic Aridic Paleustalf",ALFISOLS,Ap2,3,11,33.62863056,-102.5158611
+11N00166,145328,613,6.3,82.9,11.9,5.2,33.5,11N0024,GA,Miller,"Fine-loamy, kaolinitic, thermic Plinthic Kandiudult",ULTISOLS,A,0,2,31.18447778,-84.54053056
+11N00167,145329,288,5.2,86.1,10.3,3.6,9.2,11N0024,GA,Miller,"Fine-loamy, kaolinitic, thermic Plinthic Kandiudult",ULTISOLS,A,2,28,31.18447778,-84.54053056
+11N00473,146189,326,4.8,84.9,10,5.1,23.7,11N0099,GA,Emanuel,"Fine-loamy, kaolinitic, thermic Plinthic Kandiudult",ULTISOLS,A,2,18,32.361375,-82.37924167
+11N00479,146195,511,4.3,86.5,9.5,4,62.2,11N0100,GA,Emanuel,"Fine-loamy, kaolinitic, thermic Plinthic Kandiudult",ULTISOLS,A,0,2,32.36174722,-82.37922778
+11N00830,146821,218,8.3,79.2,7.2,13.6,3.2,11N0182,TX,Lubbock,"Fine-loamy, mixed, superactive, thermic Aridic Paleustalfs",ALFISOLS,A/Btp,16,33,33.56827778,-101.7294167
+12N01343,166196,449,5.2,34.5,50.7,14.8,37.3,12N7673,OR,Lane,"Medial, ferrihydritic, frigid Alic Hapludand",ANDISOLS,A1,6,23,44.24688889,-122.1574167
+12N01410,166263,606,5.4,55,37.6,7.4,44.7,12N7682,OR,Linn,"Medial-skeletal, ferrihydritic, allic Typic Haplocryand",ANDISOLS,A2,9,20,44.46,-122.2048056
+12N01507,167797,401,6.1,19.5,62.5,18,12.2,12N7703,OK,Garfield,"Fine, mixed, superactive, thermic Udertic Paleustoll",MOLLISOLS,A2,2,36,36.50662778,-97.618425
+12N01585,167875,516,5.1,11.4,61.6,27,18.3,12N7729,OK,Grant,"Fine, mixed, superactive, thermic Udertic Paleustoll",MOLLISOLS,Ap1,0,2,36.86958333,-97.63590556
+12N01621,167911,334,4.4,10.5,63.8,25.7,10.2,12N7741,OK,Grant,"Fine, mixed, superactive, thermic Udertic Paleustoll",MOLLISOLS,A1,0,2,36.91327778,-97.78011944
+12N03863,184941,444,6.5,25.5,45.5,29,8.608,12N8181,SD,Mellette,"Fine, smectitic, mesic Aridic Argiustoll",MOLLISOLS,Ap,5,16,43.59583333,-101.0916667
+12N03908,184986,1179,6.3,17.9,57.7,24.4,42.172,12N8189,SD,Mellette,"Fine, smectitic, mesic Aridic Argiustoll",MOLLISOLS,A,0,2,43.5953083,-101.0979583
+14N00552,222969,657,6.7,52.8,25.7,21.5,21.3,14N0162,SD,Deuel,"Fine-loamy, mixed, superactive, frigid Calcic Hapludoll",MOLLISOLS,Ap2,2,21,44.87444444,-96.69238889
+14N04950,229943,621,7.2,8.4,56.8,34.8,22.996,14N1013,MN,Renville,"Fine-silty, mixed, superactive, mesic Oxyaquic Hapludoll",MOLLISOLS,A,26,50,44.84538889,-95.19905556
+15N00592,230753,1304,6.4,5,64.4,30.6,60.684,15N0051,NE,Dodge,"Fine-silty, mixed, superactive, mesic Udic Haplustoll",MOLLISOLS,A1,0,5,41.65078056,-96.46493056
+15N01334,232148,813,5.5,12.6,60,27.4,24.288,15N0155,KS,Sheridan,"Fine-silty, mixed, superactive, mesic Aridic Argiustoll",MOLLISOLS,Ap,0,8,39.20647222,-100.4348278
+15N01344,232158,224,7.6,11,51,38,7.108,15N0158,KS,Sheridan,"Fine-silty, mixed, superactive, mesic Aridic Argiustoll",MOLLISOLS,Ap,0,19,39.22162778,-100.4390861
+15N01350,232164,739,6.2,13.7,62,24.3,19.044,15N0160,KS,Sheridan,"Fine-silty, mixed, superactive, mesic Aridic Argiustoll",MOLLISOLS,Ap,0,8,39.22801389,-100.4497917
+15N01722,232345,924,6.8,29.4,36.2,34.4,11.524,15N0285,CA,Sutter,"Fine-loamy, mixed, superactive, thermic Entic Durixerept",INCEPTISOLS,Ap,0,5,39.1745,-121.6906111
+15N01868,233844,439,6.3,32.1,55,12.9,11.532,15N0341,CA,San Joaquin,"Fine-loamy, mixed, active, nonacid, thermic Aquic Xerofluvent",ENTISOLS,Ap,0,12,38.17053611,-121.1667556
+15N02123,231881,918,4.8,14.9,61.8,23.3,37.556,15N0413,SD,Walworth,"Fine-silty, mixed, superactive, frigid Typic Argiustoll",MOLLISOLS,Ap1,0,2,45.459725,-100.0527861
+15N02124,231882,733,4.6,16.3,59.5,24.2,28.18,15N0413,SD,Walworth,"Fine-silty, mixed, superactive, frigid Typic Argiustoll",MOLLISOLS,Ap1,2,3,45.459725,-100.0527861
+15N02128,231886,732,4.6,16.7,60.4,22.9,31.616,15N0414,SD,Walworth,"Fine-silty, mixed, superactive, frigid Typic Argiustoll",MOLLISOLS,Ap1,0,3,45.46001944,-100.0531806
+15N02157,231915,2411,5.5,35.4,43.4,21.2,97.3,15N0420,SD,Walworth,"Coarse-silty, mixed, superactive, frigid Pachic Argiustoll",MOLLISOLS,A1,0,2,45.34267222,-99.99147778
+15N02158,231916,919,6,37.5,44.8,17.7,45.36,15N0420,SD,Walworth,"Coarse-silty, mixed, superactive, frigid Pachic Argiustoll",MOLLISOLS,A1,2,6,45.34267222,-99.99147778
+15N02294,233952,7934,5.5,44.6,40.5,14.9,288.4,15N0452,MI,Newaygo,"Sandy or sandy-skeletal, mixed, euic, mesic Terric Haplosaprist",HISTOSOLS,Oa1,0,14,43.30391111,-85.76005278

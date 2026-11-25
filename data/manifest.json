@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "datasets": {
+    "srdi_kushtia_2024": {
+      "title": "Soil nutrient status at three depths across 57 grid points, Kushtia, Bangladesh (2024)",
+      "doi": "10.17632/frkzb57y7p.1",
+      "source_url": "https://data.mendeley.com/datasets/frkzb57y7p",
+      "auth_required": false,
+      "provenance": "Public Lab Benchmark (SRDI Regional Laboratory Kushtia, Bangladesh)",
+      "circular_leak_warning": "TN_pct in Supplementary_Data_S10.csv is derived from OM_pct (TN = 0.0492 * OM - 0.0065, r = 0.978) and must NOT be used as an independent predictor.",
+      "files": [
+        {
+          "path": "data/raw/srdi_kushtia/Supplementary_Data_S10.csv",
+          "download_url": "https://data.mendeley.com/public-files/datasets/frkzb57y7p/files/18433563-d93a-484c-b180-c43315d64db7/file_downloaded",
+          "sha256": "9a695af3c8f7eedffd45c3f7da642ef595efc22ad4863c0ddcacd5efdd4ed692"
+        }
+      ]
+    },
+    "usda_kssl_poxc": {
+      "title": "Kellogg Soil Survey Laboratory (KSSL) POX-C dataset",
+      "doi": "10.15482/USDA.ADC/1518679",
+      "source_url": "https://agdatacommons.nal.usda.gov/articles/dataset/Kellogg_Soil_Survey_Laboratory_KSSL_POX-C_dataset/24665565",
+      "license": "U.S. Public Domain",
+      "auth_required": false,
+      "provenance": "Public Lab Benchmark (USDA-NRCS Kellogg Soil Survey Laboratory)",
+      "unit_warning": "Table.S1.KSSL_SelectedSamples.csv SOC column values (e.g. 28.0 for sample 64511 with POXC 1182.76 mg/kg and Ratio_poxc-soc 0.042) are in g C/kg, not percent; divide by 10 to convert to %SOC.",
+      "files": [
+        {
+          "path": "data/raw/usda_kssl_poxc/POXC_DataDictionary.csv",
+          "download_url": "https://ndownloader.figshare.com/files/44528096",
+          "sha256": "e40cb3100f06126d9c52c516c800bc24734ecee4d6e3701c062e8eab204e1f5f"
+        },
+        {
+          "path": "data/raw/usda_kssl_poxc/POX_Data_replicates.csv",
+          "download_url": "https://ndownloader.figshare.com/files/44528099",
+          "sha256": "5b7c2f7bc0c3efb90990c71608ce42f0ef1c5597e456d4c049b5dbaecb96f32c"
+        },
+        {
+          "path": "data/raw/usda_kssl_poxc/Table.S1.KSSL_SelectedSamples.csv",
+          "download_url": "https://ndownloader.figshare.com/files/44528102",
+          "sha256": "57bf3e66be66ffed680d465d69e76ee5c8871e1bd4f5097f444d3882f601c818"
+        },
+        {
+          "path": "data/raw/usda_kssl_poxc/Table.S2.SampleData.csv",
+          "download_url": "https://ndownloader.figshare.com/files/44528195",
+          "sha256": "bd6696cf8b8ef02b63dbf6279cddf997167b446eec4e56478536508067a9541f"
+        }
+      ]
+    },
+    "kaggle_soil_fertility": {
+      "title": "Soil Fertility Dataset",
+      "kaggle_slug": "rahuljaiswalonkaggle/soil-fertility-dataset",
+      "source_url": "https://www.kaggle.com/datasets/rahuljaiswalonkaggle/soil-fertility-dataset",
+      "auth_required": true,
+      "provenance": "Public Lab Benchmark (Kaggle Soil Fertility 5-sensor benchmark)",
+      "quality_warning": "Contains 7 extreme/corrupt outliers (pH 0.90, 10.05-11.15; OC 24.0% with Zn 38.0) that must be flagged and excluded by physics guardrails.",
+      "files": [
+        {
+          "path": "data/raw/kaggle_soil_fertility/dataset1.csv",
+          "download_method": "kagglehub",
+          "sha256": "930e0731ce747590aba71ca6d6ffd2f6e77202f812e01fa3e9c19a5b9e5fe5a4"
+        }
+      ]
+    }
+  }
+}

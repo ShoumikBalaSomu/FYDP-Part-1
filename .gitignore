@@ -1,0 +1,46 @@
+# Python & ML environments
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Node & Frontend
+web_app/node_modules/
+web_app/dist/
+web_app/.vite/
+web_app/playwright-report/
+web_app/test-results/
+node_modules/
+
+# Secrets & local credentials (NEVER commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+kaggle.json
+.kaggle/
+.netrc
+*_credentials*
+*_secrets*
+
+# Third-party raw datasets fetched via scripts/fetch_datasets.py
+# (USDA KSSL POXC is U.S. Public Domain and tracked directly)
+data/raw/kaggle_soil_fertility/
+data/raw/srdi_kushtia/
+
+# OS / Editor / Scratch
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.ipynb_checkpoints/
+tmp/

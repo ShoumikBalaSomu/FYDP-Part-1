@@ -1,0 +1,39 @@
+File,Field,Description
+Table.S1.KSSL_SelectedSample,Layer_ID,internal KSSL tracking
+Table.S1.KSSL_SelectedSample,KSSL_Sample_ID,internal KSSL identifier
+Table.S1.KSSL_SelectedSample,Previoius KSSL POXC,Previous KSSL POX C/Active C value
+Table.S1.KSSL_SelectedSample,pH,ph
+Table.S1.KSSL_SelectedSample,Sand,% SAND
+Table.S1.KSSL_SelectedSample,Silt,% SILT
+Table.S1.KSSL_SelectedSample,Clay,% CLAY
+Table.S1.KSSL_SelectedSample,SOC,% ESTIMATED ORGANIC CARBON
+Table.S1.KSSL_SelectedSample,Pedon_ID,Internal KSSL pedon identifier
+Table.S1.KSSL_SelectedSample,State / Territory Code,state/territory
+Table.S1.KSSL_SelectedSample,County,county
+Table.S1.KSSL_SelectedSample,Taxonomic Classification,US soil taxonomy classification
+Table.S1.KSSL_SelectedSample,Order,US soil taxonomy classification
+Table.S1.KSSL_SelectedSample,Horizon Designation,Horizon Nomenclature (Field Book for Describing Soils)
+Table.S1.KSSL_SelectedSample,Top,Sample depth - top (cm)
+Table.S1.KSSL_SelectedSample,Bottom,Sample depth - bottom (cm)
+Table.S1.KSSL_SelectedSample,Latitude,Latitude
+Table.S1.KSSL_SelectedSample,Longitude,Longitude
+Table.S2.SampleData,SampleID,KSSL sample identifier
+Table.S2.SampleData,Sample Prep,Grind preparation
+Table.S2.SampleData,Sample Mass,Mass of sample used in analysis
+Table.S2.SampleData,Conc_mM,Permanganace concentration (MnO-4)
+Table.S2.SampleData,sd.Conc_mm,standard deviation across samplexprepxmass replicates
+Table.S2.SampleData,POXC_mgkg-1,Mean POX conversion
+Table.S2.SampleData,sd.poxc,standard deviation across samplexprepxmass replicates
+Table.S2.SampleData,Ratio_poxc-soc,ratio of sample SOC to measured OX
+Table.S2.SampleData,sd.ratio,standard deviation across samplexprepxmass replicates
+Table.S2.SampleData,no_valid,number of replicates with valid values
+POX_Data_replicates,smp_id,KSSL sample identifier
+POX_Data_replicates,Grind,Grind preparation
+POX_Data_replicates,prep_name,preperation name used in KSSL
+POX_Data_replicates,wt_class,Mass of sample used for aggregation
+POX_Data_replicates,smp_wt,exact sample weight used analysis
+POX_Data_replicates,POXC_mgkg-1,POX C of individual replicate
+POX_Data_replicates,Conc,Permanganace concentration (MnO-4)
+POX_Data_replicates,Validation,Is this concentration within a valid range
+POX_Data_replicates,Batch,internal KSSL tracking
+POX_Data_replicates,rep,replicate within sample x mass x preperation
