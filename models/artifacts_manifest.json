@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-11-25T03:55:13.071760+00:00",
+  "registry_file": "models/registry.json",
+  "registry_file_sha256": "3db20ef2b594c95a8243768659c199a77b0c466213c7878ac26022b1ff21bb81",
+  "registry_file_bytes": 389139,
+  "canonical_payload_sha256": "8c08a860135a0bc3625acd1e11bd01a85df2db3833d357cc2270f15c264c97d5",
+  "models": {
+    "srdi_kushtia_om_champion": {
+      "dataset_id": "srdi_kushtia_2024",
+      "selection_status": "selected_champion",
+      "selected_model_family": "hist_gradient_boosting",
+      "target_name": "OM_pct",
+      "target_unit": "%",
+      "rmse": 0.330689,
+      "r2": 0.173378,
+      "q_095": 0.74758193,
+      "empirical_coverage": 0.964912,
+      "artifact_sha256": "d4030d18bd5e44350e4051e3514e19bb824b6d6c2eb7c2ccb197cea556627d31",
+      "python_json_max_abs_diff": 1.5543122344752192e-15
+    },
+    "srdi_kushtia_om_baseline_ols": {
+      "dataset_id": "srdi_kushtia_2024",
+      "selection_status": "baseline_ols",
+      "selected_model_family": "standardized_linear_interaction",
+      "target_name": "OM_pct",
+      "target_unit": "%",
+      "rmse": 0.34996,
+      "r2": 0.074228,
+      "q_095": 0.75516258,
+      "empirical_coverage": 0.97076,
+      "artifact_sha256": "75eabc1cabd0a57bef9bfa06b99baacbb878ce03edeebff6ad3fbb4b4d44828c",
+      "python_json_max_abs_diff": 2.220446049250313e-16
+    },
+    "kaggle_mineral_oc_benchmark": {
+      "dataset_id": "kaggle_soil_fertility",
+      "selection_status": "benchmark_reference",
+      "selected_model_family": "standardized_linear_interaction",
+      "target_name": "OC_pct",
+      "target_unit": "%",
+      "rmse": 0.297552,
+      "r2": -0.004377,
+      "q_095": 0.52350558,
+      "empirical_coverage": 0.956472,
+      "artifact_sha256": "ceae06ed0d644180de68a55087e986d7d4db0d91a565e661d47566154a287d53",
+      "python_json_max_abs_diff": 1.1102230246251565e-16
+    },
+    "usda_kssl_poxc_with_soc": {
+      "dataset_id": "usda_kssl_poxc_with_soc",
+      "selection_status": "selected_champion",
+      "selected_model_family": "elastic_net",
+      "target_name": "POXC_mg_kg",
+      "target_unit": "mg C/kg dry soil",
+      "rmse": 149.473227,
+      "r2": 0.748721,
+      "q_095": 333.74715701,
+      "empirical_coverage": 0.973684,
+      "artifact_sha256": "f077320b2e60bad835836e3cce3cb16b4f4455a8db62788945a2cdd7c06e851e",
+      "python_json_max_abs_diff": 2.2737367544323206e-13
+    },
+    "usda_kssl_poxc_without_soc": {
+      "dataset_id": "usda_kssl_poxc_without_soc",
+      "selection_status": "selected_champion",
+      "selected_model_family": "random_forest",
+      "target_name": "POXC_mg_kg",
+      "target_unit": "mg C/kg dry soil",
+      "rmse": 269.300241,
+      "r2": 0.18435,
+      "q_095": 715.81938238,
+      "empirical_coverage": 0.973684,
+      "artifact_sha256": "10bbd6df2160ab799ced3c2b866b838a4aab4946b73c897f0bdfe6f95b8d4e47",
+      "python_json_max_abs_diff": 4.547473508864641e-13
+    }
+  }
+}

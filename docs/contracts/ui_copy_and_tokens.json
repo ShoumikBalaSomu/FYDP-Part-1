@@ -1,0 +1,680 @@
+{
+  "schema_version": "1.0.0",
+  "product": {
+    "name": "SOMSense",
+    "subtitle": "ESRC Soil Organic Matter Intelligence",
+    "domain": "Agricultural soil calibration and field sensor diagnostics",
+    "default_theme": "light",
+    "supported_locales": [
+      "en",
+      "bn-fallback-ready"
+    ],
+    "voice_guideline": "Calm, concrete Bangladesh agricultural engineering and lab instrumentation copy. Short active sentences with explicit units."
+  },
+  "design_tokens": {
+    "themes": {
+      "light": {
+        "name": "Outdoor Sunlight High-Contrast",
+        "purpose": "Direct-sunlight legibility on mid-range Android tablets and phones in Cumilla and Kushtia plots",
+        "colors": {
+          "bg_canvas": "#F7F6F2",
+          "bg_surface": "#FFFFFF",
+          "bg_surface_sunken": "#EFECE4",
+          "bg_surface_elevated": "#FFFFFF",
+          "text_primary": "#141C17",
+          "text_secondary": "#3D4A42",
+          "text_muted": "#435249",
+          "text_inverse": "#FFFFFF",
+          "primary": "#156D47",
+          "primary_hover": "#0F5336",
+          "primary_soft_bg": "#E6F4EC",
+          "primary_soft_text": "#0E4D31",
+          "warning": "#B45309",
+          "warning_bg": "#FEF3D6",
+          "warning_text": "#7C3806",
+          "warning_border": "#B45309",
+          "fault": "#B91C1C",
+          "fault_bg": "#FDECEC",
+          "fault_text": "#881313",
+          "fault_border": "#B91C1C",
+          "ood_bg": "#E5E8E3",
+          "ood_text": "#1E2722",
+          "ood_border": "#525E57",
+          "border_subtle": "#D5D9D2",
+          "border_input": "#6E7B73",
+          "focus_ring": "#0F5134",
+          "chart_positive": "#156D47",
+          "chart_negative": "#B45309",
+          "chart_neutral": "#435249"
+        },
+        "verified_contrast_ratios": {
+          "text_primary_on_bg_canvas": "16.07:1",
+          "text_primary_on_bg_surface": "17.38:1",
+          "text_secondary_on_bg_canvas": "8.61:1",
+          "text_muted_on_bg_canvas": "7.64:1",
+          "text_inverse_on_primary": "6.34:1",
+          "text_inverse_on_primary_hover": "9.09:1",
+          "warning_text_on_warning_bg": "7.84:1",
+          "fault_text_on_fault_bg": "8.55:1",
+          "ood_text_on_ood_bg": "12.41:1",
+          "border_input_on_bg_surface": "4.43:1"
+        }
+      },
+      "dark": {
+        "name": "Lab and Night Review",
+        "purpose": "Low-glare laboratory calibration review and evening data audit using redesigned charcoal surfaces",
+        "colors": {
+          "bg_canvas": "#0F1512",
+          "bg_surface": "#17201B",
+          "bg_surface_sunken": "#0B100D",
+          "bg_surface_elevated": "#1E2A23",
+          "text_primary": "#EDF2EE",
+          "text_secondary": "#C6D2CB",
+          "text_muted": "#A7B7AE",
+          "text_inverse": "#082015",
+          "primary": "#34D399",
+          "primary_hover": "#6EE7B7",
+          "primary_soft_bg": "#102B1F",
+          "primary_soft_text": "#6EE7B7",
+          "warning": "#F59E0B",
+          "warning_bg": "#2D1E08",
+          "warning_text": "#FCD34D",
+          "warning_border": "#D97706",
+          "fault": "#F87171",
+          "fault_bg": "#311214",
+          "fault_text": "#FCA5A5",
+          "fault_border": "#EF4444",
+          "ood_bg": "#222B26",
+          "ood_text": "#D5DDD8",
+          "ood_border": "#6E7D75",
+          "border_subtle": "#26332C",
+          "border_input": "#5F7368",
+          "focus_ring": "#6EE7B7",
+          "chart_positive": "#34D399",
+          "chart_negative": "#F59E0B",
+          "chart_neutral": "#A7B7AE"
+        },
+        "verified_contrast_ratios": {
+          "text_primary_on_bg_canvas": "16.31:1",
+          "text_primary_on_bg_surface": "14.72:1",
+          "text_muted_on_bg_surface": "7.97:1",
+          "text_inverse_on_primary": "8.90:1",
+          "primary_on_bg_surface": "8.68:1",
+          "warning_text_on_warning_bg": "11.20:1",
+          "fault_text_on_fault_bg": "9.02:1",
+          "ood_text_on_ood_bg": "10.52:1",
+          "border_input_on_bg_surface": "3.29:1"
+        }
+      }
+    },
+    "typography": {
+      "font_sans": "'IBM Plex Sans', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif",
+      "font_mono": "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+      "numeric_variant": "tabular-nums",
+      "scale": {
+        "gauge_hero": {
+          "font": "mono",
+          "size_rem": 2.25,
+          "weight": 600,
+          "line_height": 1.1
+        },
+        "h1": {
+          "font": "sans",
+          "size_rem": 1.5,
+          "weight": 600,
+          "line_height": 1.25
+        },
+        "h2": {
+          "font": "sans",
+          "size_rem": 1.125,
+          "weight": 600,
+          "line_height": 1.3
+        },
+        "h3": {
+          "font": "sans",
+          "size_rem": 0.9375,
+          "weight": 600,
+          "line_height": 1.35
+        },
+        "body": {
+          "font": "sans",
+          "size_rem": 0.9375,
+          "weight": 400,
+          "line_height": 1.55
+        },
+        "label": {
+          "font": "sans",
+          "size_rem": 0.8125,
+          "weight": 500,
+          "line_height": 1.4
+        },
+        "mono_reading": {
+          "font": "mono",
+          "size_rem": 1.0,
+          "weight": 500,
+          "line_height": 1.4
+        }
+      }
+    },
+    "layout_and_targets": {
+      "base_unit_px": 4,
+      "spacing_scale_px": [4, 8, 12, 16, 24, 32, 48],
+      "max_content_width_px": 1280,
+      "min_mobile_width_px": 360,
+      "min_touch_target_px": 44,
+      "input_min_height_px": 48,
+      "button_min_height_px": 44,
+      "tab_min_height_px": 48,
+      "radii_px": {
+        "card": 8,
+        "control": 6,
+        "pill": 9999
+      },
+      "focus_outline": "3px solid var(--focus-ring)",
+      "focus_offset_px": 2
+    },
+    "motion": {
+      "micro_ms": 150,
+      "panel_ms": 220,
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "respect_reduced_motion": true
+    },
+    "iconography": {
+      "system": "Lucide vector icons or inline geometric SVG only",
+      "allow_unicode_emoji": false,
+      "state_icons": {
+        "in_range": "CheckCircle2",
+        "caution": "AlertTriangle",
+        "hardware_fault": "OctagonAlert",
+        "outside_calibration_range": "Compass",
+        "offline_ready": "HardDriveDownload"
+      }
+    },
+    "barc_srdi_fertility_scale": [
+      {
+        "id": "very_low",
+        "label": "Very Low",
+        "range_label": "< 1.0% SOM",
+        "min_som_pct": 0.0,
+        "max_som_pct": 1.0,
+        "reference": "BARC/SRDI Agronomic Reference",
+        "light_bg": "#FDECEC",
+        "light_fg": "#881313",
+        "dark_bg": "#311214",
+        "dark_fg": "#FCA5A5"
+      },
+      {
+        "id": "low",
+        "label": "Low",
+        "range_label": "1.0 - 1.7% SOM",
+        "min_som_pct": 1.0,
+        "max_som_pct": 1.7,
+        "reference": "BARC/SRDI Agronomic Reference",
+        "light_bg": "#FEF3D6",
+        "light_fg": "#7C3806",
+        "dark_bg": "#2D1E08",
+        "dark_fg": "#FCD34D"
+      },
+      {
+        "id": "medium",
+        "label": "Medium",
+        "range_label": "1.7 - 3.4% SOM",
+        "min_som_pct": 1.7,
+        "max_som_pct": 3.4,
+        "reference": "BARC/SRDI Agronomic Reference",
+        "light_bg": "#ECFDF5",
+        "light_fg": "#0E4D31",
+        "dark_bg": "#102B1F",
+        "dark_fg": "#6EE7B7"
+      },
+      {
+        "id": "high",
+        "label": "High",
+        "range_label": "3.4 - 5.5% SOM",
+        "min_som_pct": 3.4,
+        "max_som_pct": 5.5,
+        "reference": "BARC/SRDI Agronomic Reference",
+        "light_bg": "#DCFCE7",
+        "light_fg": "#114B2D",
+        "dark_bg": "#0F3826",
+        "dark_fg": "#86EFAC"
+      },
+      {
+        "id": "very_high",
+        "label": "Very High",
+        "range_label": "> 5.5% SOM",
+        "min_som_pct": 5.5,
+        "max_som_pct": null,
+        "reference": "BARC/SRDI Agronomic Reference",
+        "light_bg": "#D1FAE5",
+        "light_fg": "#064E3B",
+        "dark_bg": "#093D2E",
+        "dark_fg": "#A7F3D0"
+      }
+    ],
+    "calibration_domain_pills": {
+      "in_range": {
+        "label": "In-Range",
+        "icon": "CheckCircle2",
+        "description": "All sensor values sit inside training bounds and Mahalanobis D^2 stays below the 99th percentile."
+      },
+      "caution": {
+        "label": "Caution",
+        "icon": "AlertTriangle",
+        "description": "Sensor reading sits near the edge of training bounds or carries a moisture/ion disturbance flag."
+      },
+      "outside": {
+        "label": "Outside Calibration Range",
+        "icon": "Compass",
+        "description": "Input lies beyond the calibrated domain. Pair this site with a lab sample before using numeric SOM estimates."
+      }
+    }
+  },
+  "navigation": {
+    "skip_to_main": "Skip to workspace",
+    "max_top_level_tabs": 3,
+    "tabs": [
+      {
+        "id": "predict_diagnose",
+        "label": "Predict & Diagnose",
+        "short_description": "Run local sensor physics checks and view calibrated SOM estimates."
+      },
+      {
+        "id": "calibrate_lab",
+        "label": "Calibrate Lab Data",
+        "short_description": "Upload paired AEZ CSV sheets, normalize units, and refit local weights."
+      },
+      {
+        "id": "science_poxc",
+        "label": "Science & POXC",
+        "short_description": "Inspect Dr. Fizar's calibration pathway, POXC modeling, and dataset audits."
+      }
+    ]
+  },
+  "presets": [
+    {
+      "id": "cumilla_2_fault",
+      "button_label": "Load cumilla 2 Fault",
+      "badge": "Hardware + Saturation Case",
+      "description": "Real ESRC Device - 1 field log from cumilla 2 showing pH 0.12 and Humidity 100%.",
+      "payload": {
+        "device_id": "ESRC Device - 1",
+        "site_id": "cumilla 2",
+        "aez_zone": "AEZ-19",
+        "timestamp": "2026-09-29T10:15:00+06:00",
+        "nitrogen_mg_kg": 185,
+        "phosphorus_mg_kg": 18.0,
+        "potassium_mg_kg": 175,
+        "ph": 0.12,
+        "ec_value": 1.48,
+        "ec_unit": "dS/m",
+        "salinity_mg_l": 947,
+        "temperature_c": 29.4,
+        "moisture_pct": 100.0,
+        "depth_cm": "0-15",
+        "texture_class": "Clay Loam"
+      }
+    },
+    {
+      "id": "healthy_kushtia_plot",
+      "button_label": "Load Healthy Kushtia Plot",
+      "badge": "SRDI Grid Benchmark",
+      "description": "SRDI Kushtia Sample_ID 1 (Katdaha Char, 0-20 cm) with K converted from 0.23 cmol(+)/kg to 89.93 mg/kg alongside AEZ-11 field climate values.",
+      "payload": {
+        "device_id": "SRDI-Kushtia-Grid",
+        "site_id": "Katdaha Char (Sample_ID 1)",
+        "aez_zone": "AEZ-11",
+        "timestamp": "2026-10-02T09:30:00+06:00",
+        "nitrogen_mg_kg": 210,
+        "phosphorus_mg_kg": 22.5,
+        "potassium_mg_kg": 89.93,
+        "ph": 7.8,
+        "ec_value": 0.54,
+        "ec_unit": "dS/m",
+        "salinity_mg_l": 346,
+        "temperature_c": 26.8,
+        "moisture_pct": 36.0,
+        "depth_cm": "0-20",
+        "texture_class": "Clay"
+      }
+    },
+    {
+      "id": "wet_paddy_caution",
+      "button_label": "Load Wet Paddy Caution",
+      "badge": "Saturation Flag",
+      "description": "Saturated Aman plot at 99% moisture and 2.35 dS/m EC that triggers a disturbance warning.",
+      "payload": {
+        "device_id": "ESRC Device - 1",
+        "site_id": "cumilla 2 wet plot",
+        "aez_zone": "AEZ-19",
+        "timestamp": "2026-10-04T08:10:00+06:00",
+        "nitrogen_mg_kg": 205,
+        "phosphorus_mg_kg": 21.0,
+        "potassium_mg_kg": 190,
+        "ph": 6.4,
+        "ec_value": 2.35,
+        "ec_unit": "dS/m",
+        "salinity_mg_l": 1504,
+        "temperature_c": 28.2,
+        "moisture_pct": 99.0,
+        "depth_cm": "0-15",
+        "texture_class": "Silty Clay"
+      }
+    },
+    {
+      "id": "ood_extreme_sample",
+      "button_label": "Load Out-of-Range Sample",
+      "badge": "OOD Rejection",
+      "description": "High-salinity coastal sample (EC 5.4 dS/m, pH 9.3, K 680 mg/kg) beyond the calibrated feature domain.",
+      "payload": {
+        "device_id": "ESRC Device - 1",
+        "site_id": "coastal-test-04",
+        "aez_zone": "AEZ-13",
+        "timestamp": "2026-10-05T11:20:00+06:00",
+        "nitrogen_mg_kg": 620,
+        "phosphorus_mg_kg": 88.0,
+        "potassium_mg_kg": 680,
+        "ph": 9.3,
+        "ec_value": 5.4,
+        "ec_unit": "dS/m",
+        "salinity_mg_l": 3456,
+        "temperature_c": 34.5,
+        "moisture_pct": 48.0,
+        "depth_cm": "0-15",
+        "texture_class": "Clay"
+      }
+    }
+  ],
+  "ui_copy": {
+    "app_shell": {
+      "brand_title": "SOMSense",
+      "brand_subtitle": "ESRC Soil Organic Matter Intelligence",
+      "offline_badge_ready": "Offline Engine Ready",
+      "offline_badge_syncing": "Loading Local Model",
+      "theme_toggle_light": "Outdoor Light",
+      "theme_toggle_dark": "Lab Dark",
+      "latency_readout_template": "Local inference completed in {ms} ms",
+      "footer_provenance": "Calibrated workflow for Bangladesh ESRC probe telemetry and SRDI laboratory benchmarks. Predictions stay in browser memory unless you export them."
+    },
+    "tab_predict_diagnose": {
+      "section_inputs_heading": "Field Sensor and Plot Inputs",
+      "section_presets_heading": "Quick Field Scenarios",
+      "section_output_heading": "Calibrated SOM Instrument Output",
+      "section_details_heading": "Model Evidence and Raw Telemetry",
+      "calculate_button": "Run Calibration Check",
+      "reset_button": "Clear Inputs",
+      "fields": {
+        "site_id": {
+          "label": "Site Label",
+          "placeholder": "cumilla 2",
+          "helper": "Plot or village identifier from your field log."
+        },
+        "device_id": {
+          "label": "Sensor Unit",
+          "placeholder": "ESRC Device - 1",
+          "helper": "Hardware label carried through to fault tickets and exports."
+        },
+        "nitrogen_mg_kg": {
+          "label": "Available Nitrogen (N)",
+          "unit": "mg/kg",
+          "placeholder": "185",
+          "helper": "Mineral N in mg/kg dry soil. Keep distinct from Kjeldahl Total N (%)."
+        },
+        "phosphorus_mg_kg": {
+          "label": "Phosphorus (P)",
+          "unit": "mg/kg",
+          "placeholder": "22.5",
+          "helper": "Available P in mg/kg dry soil."
+        },
+        "potassium": {
+          "label": "Potassium (K)",
+          "unit_options": ["mg/kg", "cmol(+)/kg"],
+          "placeholder": "175",
+          "helper": "SRDI lab reports in cmol(+)/kg convert automatically by multiplying by 391."
+        },
+        "ph": {
+          "label": "Soil pH",
+          "unit": "pH units",
+          "placeholder": "6.5",
+          "helper": "Valid soil probe range spans pH 3.0 to 10.0."
+        },
+        "ec": {
+          "label": "Electrical Conductivity (EC)",
+          "unit_options": ["dS/m", "uS/cm"],
+          "placeholder": "0.54",
+          "helper": "Select the exact unit on your firmware readout (1 dS/m equals 1000 uS/cm)."
+        },
+        "salinity_mg_l": {
+          "label": "Salinity (Optional Check)",
+          "unit": "mg/L",
+          "placeholder": "346",
+          "helper": "Used to cross-check EC register scaling (~0.5 to 0.7 times EC in uS/cm)."
+        },
+        "temperature_c": {
+          "label": "Soil Temperature",
+          "unit": "deg C",
+          "placeholder": "27.8",
+          "helper": "Used in the standardized z_T * z_M interaction term."
+        },
+        "moisture_pct": {
+          "label": "Soil Moisture / Humidity",
+          "unit": "%",
+          "placeholder": "36.0",
+          "helper": "Readings at or above 98% flag water saturation interference on bulk EC."
+        },
+        "depth_cm": {
+          "label": "Sampling Depth",
+          "unit": "cm",
+          "options": ["0-15", "0-20", "20-40", "40-60"],
+          "helper": "Depth horizon used to select matching calibration bounds."
+        },
+        "texture_class": {
+          "label": "Soil Texture",
+          "options": ["Loam", "Clay Loam", "Silty Clay", "Clay", "Sandy Loam", "Unknown"],
+          "helper": "Surface area and clay fraction affect organic matter stabilization."
+        },
+        "van_bemmelen_k": {
+          "label": "Van Bemmelen Factor (k)",
+          "unit": "SOM / SOC",
+          "placeholder": "1.724",
+          "helper": "Default is 1.724. Adjust only when local lab combustion pairs measure a different factor."
+        },
+        "days_since_rain": {
+          "label": "Days Since Heavy Rain",
+          "unit": "days",
+          "placeholder": "5",
+          "helper": "Values under 3 days help explain sudden EC spikes."
+        },
+        "days_since_fertilizer": {
+          "label": "Days Since Fertilizer",
+          "unit": "days",
+          "placeholder": "14",
+          "helper": "Values under 3 days trigger transient ion caution."
+        }
+      },
+      "validation_inline": {
+        "required_number": "Enter a numeric value before running calibration.",
+        "non_finite": "Value must be a finite number (NaN and Infinity are blocked).",
+        "negative_forbidden": "This soil measurement cannot be negative.",
+        "ph_out_of_bounds": "Soil pH must sit between 3.0 and 10.0 to pass sensor physics checks.",
+        "moisture_over_100": "Soil moisture cannot exceed 100%.",
+        "temp_out_of_bounds": "Soil temperature must sit between -10 deg C and 60 deg C.",
+        "ec_unit_required": "Choose dS/m or uS/cm before computing EC interactions.",
+        "ec_salinity_mismatch": "Salinity disagrees with EC by more than 2x. Check whether firmware swapped the registers."
+      },
+      "trust_gauge": {
+        "metric_title": "Estimated SOM (%)",
+        "soc_secondary_label": "Estimated SOC (%)",
+        "disclosure": "Calibrated estimate from sensor inputs and site covariates. Display alongside its 95% interval and model tag.",
+        "interval_label": "95% Prediction Interval",
+        "model_version_label": "Model Version",
+        "domain_status_label": "Calibration Domain Status",
+        "barc_badge_label": "BARC/SRDI Agronomic Reference",
+        "barc_disclaimer": "Reference scale from Bangladesh BARC/SRDI fertility guidelines for field context.",
+        "empty_prompt": "Enter field readings on the left or tap a preset above to run a local calibration check."
+      },
+      "banners": {
+        "hardware_fault": {
+          "code": "SENSOR_FAULT_CRITICAL",
+          "title": "Hardware Sensor Fault (Prediction Blocked)",
+          "summary_template": "{device_id} at {site_id} reported {fault_metric}. SOM estimation is paused until hardware readings fall inside physical soil limits.",
+          "checklist_heading": "Field Check Steps",
+          "steps": [
+            "1. Unplug and reseat the RS485 probe connector, then wipe mud and salt film off the electrode tip.",
+            "2. Place the pH probe in 7.00 and 4.01 calibration buffers to confirm electrode voltage responds.",
+            "3. Inspect Modbus register scaling for decimal shifts (a raw reading of 0.12 can reflect a disconnected probe or a x10/x100 register mismatch)."
+          ]
+        },
+        "saturation_disturbance": {
+          "code": "SATURATION_DISTURBANCE_WARNING",
+          "title": "Water Saturation Caution (Moisture >= 98%)",
+          "summary": "Standing water fills soil pores and raises bulk electrical conductivity independently of organic matter. Treat the EC * Moisture contribution as disturbed.",
+          "action": "Log this reading with a wet-field tag. Wait 48 hours after drainage before comparing week-over-week SOM trends."
+        },
+        "transient_ion_disturbance": {
+          "code": "TRANSIENT_ION_DISTURBANCE",
+          "title": "Transient Ion Spike Flagged",
+          "summary": "High EC (> 2.0 dS/m) combined with high moisture or recent rain/fertilizer (< 3 days) inflates apparent conductivity.",
+          "action": "Retest after irrigation water settles or soluble fertilizer salts diffuse."
+        },
+        "temporal_jump": {
+          "code": "TEMPORAL_JUMP_WARNING",
+          "title": "Rapid 24-Hour Shift (> 0.35% SOM)",
+          "summary": "Real soil organic matter changes slowly across seasons. A jump above 0.35 percentage points within 24 hours points to probe drift, wetting, or fertilizer application.",
+          "action": "Verify electrode seating and record soil moisture before saving this point to a plot log."
+        },
+        "ood_rejected": {
+          "code": "OUTSIDE_CALIBRATION_RANGE",
+          "title": "Outside Calibration Range (Estimate Withheld)",
+          "summary": "One or more inputs fall outside the calibrated training bounds or exceed the Mahalanobis D^2 99th percentile threshold. SOMSense withholds numeric extrapolation here.",
+          "action": "Collect a paired soil core from this plot and upload the lab result in Calibrate Lab Data to extend the local domain."
+        }
+      },
+      "accordions": {
+        "equations": {
+          "title": "Model Equations and Standardization",
+          "subtitle": "Inspect the 9-term standardized linear equation and Van Bemmelen conversion",
+          "note": "Training fold means (mu_j) and standard deviations (s_j) standardize each term before computing z_T * z_M and z_EC * z_M.",
+          "formula_heading": "Standardized SOC and SOM Formula",
+          "term_labels": {
+            "intercept": "Baseline Intercept",
+            "z_N": "Standardized N (z_N)",
+            "z_P": "Standardized P (z_P)",
+            "z_K": "Standardized K (z_K)",
+            "z_pH": "Standardized pH (z_pH)",
+            "z_EC": "Standardized EC (z_EC)",
+            "z_T": "Standardized Temp (z_T)",
+            "z_M": "Standardized Moisture (z_M)",
+            "z_T_z_M": "Thermal-Moisture Interaction (z_T * z_M)",
+            "z_EC_z_M": "Conductivity-Moisture Interaction (z_EC * z_M)"
+          }
+        },
+        "shap_drivers": {
+          "title": "Feature Drivers (SHAP and Coefficients)",
+          "subtitle": "See how each input nudged Estimated SOM (%) away from the training baseline",
+          "positive_legend": "Increases estimated SOM (%)",
+          "negative_legend": "Decreases estimated SOM (%)",
+          "blocked_note": "Driver bars pause when a hardware fault or out-of-range reading blocks estimation."
+        },
+        "raw_telemetry": {
+          "title": "Raw Telemetry JSON Import and Sanitizer",
+          "subtitle": "Paste ESRC IoT or websoftbd JSON payloads for instant local normalization",
+          "paste_label": "Raw Sensor JSON Payload",
+          "paste_placeholder": "{\"Device\": \"ESRC Device - 1\", \"site\": \"cumilla 2\", \"PH\": 0.12, \"Humidity\": 100, \"EC\": 1.48, \"Temperature\": 29.4}",
+          "parse_button": "Parse and Validate JSON",
+          "security_note": "Prototype-pollution keys (__proto__, constructor, prototype) and spreadsheet formula prefixes (=, +, -, @) are stripped locally."
+        }
+      },
+      "exports": {
+        "heading": "Offline Plot Exports",
+        "export_csv": "Export Reading (CSV)",
+        "export_json": "Export Bundle (JSON)",
+        "print_card": "Print Field Card",
+        "formula_safe_note": "Exported CSV cells neutralize leading formula characters for safe opening in Excel."
+      }
+    },
+    "tab_calibrate_lab": {
+      "heading": "Paired Field and Lab Calibration Studio",
+      "intro": "Upload paired sensor and laboratory rows for your AEZ plot to inspect unit conversions, leakage guardrails, and local Ridge recalibration.",
+      "download_template_button": "Download AEZ CSV Template",
+      "upload_dropzone_label": "Choose or drop paired calibration CSV",
+      "upload_limits_note": "Browser parser accepts files up to 5 MB and 10,000 rows. Data stays on your device.",
+      "unit_harmonization_heading": "Automatic Unit Normalization Rules",
+      "unit_rules": [
+        "Exchangeable K in cmol(+)/kg multiplies by 391.0 to yield mg/kg.",
+        "EC in uS/cm divides by 1000.0 to yield dS/m.",
+        "USDA-style SOC in g/kg divides by 10.0 to yield %SOC."
+      ],
+      "leak_guardrail_title": "Circular Nitrogen Leak Guardrail Active",
+      "leak_guardrail_body": "Any TN_pct column is excluded from SOM predictors. On the SRDI Kushtia benchmark, TN_pct was computed from OM_pct (r = 0.978), which creates false near-perfect accuracy.",
+      "cn_warning_title": "C:N Ratio Plausibility Warning",
+      "cn_warning_body": "Independent Total N paired with SOC yielded C:N outside 5 to 35. Verify whether N is recorded in % or mg/kg, or tag organic soil horizons.",
+      "refit_button": "Run Local GroupKFold Recalibration",
+      "download_registry_button": "Download Updated Registry JSON",
+      "metrics_labels": {
+        "group_rmse": "Held-Out GroupKFold RMSE (% SOM)",
+        "group_r2": "Held-Out GroupKFold R^2",
+        "conformal_coverage": "Empirical 95% Interval Coverage",
+        "sample_count": "Valid Calibration Rows"
+      },
+      "residual_table_columns": [
+        "Site ID",
+        "Depth (cm)",
+        "Lab SOC (%)",
+        "Predicted SOC (%)",
+        "Residual",
+        "Status"
+      ],
+      "status_idle": "Ready for paired CSV upload.",
+      "status_complete_template": "Local Ridge calibration updated across {n_sites} sites.",
+      "empty_state": "Download the AEZ CSV template or upload at least 15 paired rows across multiple plots to run local calibration."
+    },
+    "tab_science_poxc": {
+      "heading": "Scientific Basis and POXC Active Carbon",
+      "fizar_pathway_title": "ESRC Calibration Protocol (29 Sep 2026)",
+      "fizar_pathway_body": "Soil probes read electrical conductivity, moisture, temperature, pH, and NPK proxies. SOMSense translates those raw signals into calibrated %SOC and %SOM with conformal uncertainty bounds.",
+      "mineral_only_proof_title": "Why Mineral Probes Alone Fail",
+      "mineral_only_proof_body": "Across 873 cleaned Kaggle mineral rows containing only N, P, K, pH, and EC, cross-validated Ridge R^2 drops below zero (-0.078). Soil temperature, moisture, and local site metadata are essential for calibration.",
+      "poxc_section_title": "Active Carbon (POXC) Pathway",
+      "poxc_section_body": "Permanganate Oxidizable Carbon (POXC) tracks labile organic matter sensitive to tillage and residue management. SOMSense reports POXC strictly in mg C/kg dry soil using a separate USDA KSSL-grounded model.",
+      "poxc_estimator": {
+        "heading": "POXC Quick Estimator",
+        "output_label": "Estimated POXC (mg C/kg dry soil)",
+        "interval_label": "95% POXC Prediction Interval",
+        "ratio_note": "Arable mineral soil POXC to SOC ratios normally sit between 0.02 and 0.06."
+      },
+      "passive_c_guardrail_title": "Carbon Fractionation Guardrail",
+      "passive_c_guardrail_body": "Total SOC minus POXC blends mineral-associated and particulate pools of different turnover rates. Report POXC and Total SOC side by side without subtracting them to estimate passive carbon.",
+      "datasets_heading": "Verified Benchmark Datasets and Audit Fixes",
+      "dataset_cards": [
+        {
+          "name": "SRDI Kushtia Benchmark (171 rows, 57 GPS grid points)",
+          "detail": "Three depths (0-20, 20-40, 40-60 cm) grouped by Sample_ID. Converted K from cmol(+)/kg to mg/kg (x391) and excluded circular TN_pct."
+        },
+        {
+          "name": "Kaggle Soil Fertility (880 raw rows, 873 cleaned)",
+          "detail": "Removed 7 extreme rows (pH 0.90 to 11.15 and OC 24.0%) via physics filters to demonstrate mineral-only generalization limits."
+        },
+        {
+          "name": "USDA-NRCS KSSL POX-C (42 samples, 38 pedons)",
+          "detail": "Filtered to <2 mm sieve and 2.5 g assay trials. Fixed the data dictionary unit bug by dividing g/kg SOC values by 10."
+        }
+      ]
+    },
+    "error_states": {
+      "csv_parse_failed": "Could not read that CSV file. Check that headers match the AEZ template and numbers contain no stray units.",
+      "file_too_large": "File exceeds the 5 MB browser limit. Split your log into smaller batches and retry.",
+      "row_limit_exceeded": "CSV exceeds 10,000 rows. Trim old calibration logs before importing.",
+      "registry_checksum_failed": "Model artifact SHA-256 verification failed. Local calculations are paused until a verified registry.json loads.",
+      "json_malformed": "Clipboard text is not valid JSON. Check brackets and quotes around field names."
+    },
+    "a11y_announcements": {
+      "prediction_updated": "Estimated SOM updated to {som_pct} percent with 95 percent interval {low} to {high}. Domain status is {domain_status}.",
+      "hardware_fault_alert": "Critical hardware fault on {device_id} at {site_id}. Numeric prediction blocked.",
+      "ood_alert": "Sample is outside calibration range. Numeric SOM estimate withheld.",
+      "preset_loaded": "Loaded scenario {preset_label}.",
+      "theme_changed": "Switched appearance to {theme_name}.",
+      "export_complete": "Saved {filename} to your device."
+    }
+  }
+}

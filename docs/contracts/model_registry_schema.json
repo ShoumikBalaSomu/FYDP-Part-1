@@ -1,0 +1,669 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://somsense.esrc.org/contracts/model_registry_schema.json",
+  "title": "SOMSense ESRC Portable Model Registry Schema",
+  "description": "Strict JSON Schema for models/registry.json enabling deterministic offline browser TypeScript inference (<1e-6 parity with Python), conformal 95% intervals, Mahalanobis/range OOD gates, soil-physics thresholds, explainability, and SHA-256 verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "platform",
+    "authority_protocol",
+    "hardware_physics_guardrails",
+    "models",
+    "leakage_and_quality_audits",
+    "integrity"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "platform": {
+      "type": "string",
+      "const": "SOMSense-ESRC"
+    },
+    "authority_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "default_van_bemmelen_k",
+        "forbid_direct_sensor_om",
+        "forbid_passive_c_subtraction",
+        "required_report_fields"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "default_van_bemmelen_k": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "forbid_direct_sensor_om": {
+          "type": "boolean",
+          "const": true
+        },
+        "forbid_passive_c_subtraction": {
+          "type": "boolean",
+          "const": true
+        },
+        "required_report_fields": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "hardware_physics_guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ph_critical_min",
+        "ph_critical_max",
+        "moisture_saturation_warning_min",
+        "moisture_max_pct",
+        "temperature_min_c",
+        "temperature_max_c",
+        "ec_transient_disturbance_ds_m",
+        "moisture_transient_disturbance_pct",
+        "daily_som_jump_threshold_pct",
+        "cn_ratio_min",
+        "cn_ratio_max",
+        "k_cmol_to_mg_kg",
+        "usda_soc_g_kg_to_pct_divisor"
+      ],
+      "properties": {
+        "ph_critical_min": { "type": "number" },
+        "ph_critical_max": { "type": "number" },
+        "moisture_saturation_warning_min": { "type": "number" },
+        "moisture_max_pct": { "type": "number" },
+        "temperature_min_c": { "type": "number" },
+        "temperature_max_c": { "type": "number" },
+        "ec_transient_disturbance_ds_m": { "type": "number" },
+        "moisture_transient_disturbance_pct": { "type": "number" },
+        "daily_som_jump_threshold_pct": { "type": "number" },
+        "cn_ratio_min": { "type": "number" },
+        "cn_ratio_max": { "type": "number" },
+        "k_cmol_to_mg_kg": { "type": "number" },
+        "usda_soc_g_kg_to_pct_divisor": { "type": "number" }
+      }
+    },
+    "models": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/ModelEntry"
+        }
+      }
+    },
+    "leakage_and_quality_audits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "srdi_tn_leakage",
+        "kaggle_mineral_only",
+        "usda_poxc_unit_audit"
+      ],
+      "properties": {
+        "srdi_tn_leakage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "with_tn_random_r2",
+            "with_tn_group_r2",
+            "without_tn_random_r2",
+            "without_tn_group_r2",
+            "with_tn_group_rmse",
+            "without_tn_group_rmse",
+            "tn_om_correlation",
+            "tn_om_formula"
+          ],
+          "properties": {
+            "with_tn_random_r2": { "type": "number" },
+            "with_tn_group_r2": { "type": "number" },
+            "without_tn_random_r2": { "type": "number" },
+            "without_tn_group_r2": { "type": "number" },
+            "with_tn_group_rmse": { "type": "number", "minimum": 0 },
+            "without_tn_group_rmse": { "type": "number", "minimum": 0 },
+            "tn_om_correlation": { "type": "number" },
+            "tn_om_formula": { "type": "string", "minLength": 1 }
+          }
+        },
+        "kaggle_mineral_only": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw_rows",
+            "flagged_outlier_rows",
+            "clean_rows",
+            "ridge_5feat_r2",
+            "ridge_5feat_rmse",
+            "outlier_criteria"
+          ],
+          "properties": {
+            "raw_rows": { "type": "integer", "minimum": 1 },
+            "flagged_outlier_rows": { "type": "integer", "minimum": 0 },
+            "clean_rows": { "type": "integer", "minimum": 1 },
+            "ridge_5feat_r2": { "type": "number" },
+            "ridge_5feat_rmse": { "type": "number", "minimum": 0 },
+            "outlier_criteria": { "type": "string", "minLength": 1 }
+          }
+        },
+        "usda_poxc_unit_audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw_samples",
+            "raw_pedons",
+            "standard_subset_prep",
+            "standard_subset_mass_g",
+            "standard_rows_total",
+            "valid_quantified_rows",
+            "reagent_exhausted_or_unquantified_rows",
+            "unit_bug_factor"
+          ],
+          "properties": {
+            "raw_samples": { "type": "integer", "minimum": 1 },
+            "raw_pedons": { "type": "integer", "minimum": 1 },
+            "standard_subset_prep": { "type": "string", "minLength": 1 },
+            "standard_subset_mass_g": { "type": "number", "exclusiveMinimum": 0 },
+            "standard_rows_total": { "type": "integer", "minimum": 1 },
+            "valid_quantified_rows": { "type": "integer", "minimum": 1 },
+            "reagent_exhausted_or_unquantified_rows": { "type": "integer", "minimum": 0 },
+            "unit_bug_factor": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hash_algorithm",
+        "canonicalization",
+        "canonical_payload_sha256"
+      ],
+      "properties": {
+        "hash_algorithm": {
+          "type": "string",
+          "const": "SHA-256"
+        },
+        "canonicalization": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_payload_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "InteractionTerm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "op", "left", "right"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "op": { "type": "string", "enum": ["z_product", "raw_product"] },
+        "left": { "type": "string", "minLength": 1 },
+        "right": { "type": "string", "minLength": 1 },
+        "restandardize": { "type": "boolean", "default": false },
+        "post_mean": { "type": "number", "default": 0.0 },
+        "post_std": { "type": "number", "exclusiveMinimum": 0, "default": 1.0 }
+      }
+    },
+    "LinearPredictor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "input_space",
+        "intercept",
+        "coefficients",
+        "clip_non_negative"
+      ],
+      "properties": {
+        "type": { "type": "string", "const": "linear" },
+        "input_space": { "type": "string", "enum": ["standardized", "raw"] },
+        "intercept": { "type": "number" },
+        "coefficients": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number" }
+        },
+        "named_coefficients": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "clip_non_negative": { "type": "boolean", "const": true }
+      }
+    },
+    "SerializedTree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "children_left",
+        "children_right",
+        "feature",
+        "threshold",
+        "value"
+      ],
+      "properties": {
+        "children_left": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": -1 }
+        },
+        "children_right": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": -1 }
+        },
+        "feature": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": -2 }
+        },
+        "threshold": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number" }
+        },
+        "value": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number" }
+        },
+        "missing_go_to_left": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "boolean" }
+        }
+      }
+    },
+    "TreeEnsemblePredictor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "input_space",
+        "feature_cast",
+        "base_score",
+        "aggregation",
+        "learning_rate",
+        "clip_non_negative",
+        "trees"
+      ],
+      "properties": {
+        "type": { "type": "string", "const": "tree_ensemble" },
+        "input_space": { "type": "string", "enum": ["standardized", "raw"] },
+        "feature_cast": { "type": "string", "enum": ["float32", "float64"] },
+        "base_score": { "type": "number" },
+        "aggregation": { "type": "string", "enum": ["mean", "sum"] },
+        "learning_rate": { "type": "number", "exclusiveMinimum": 0 },
+        "clip_non_negative": { "type": "boolean", "const": true },
+        "trees": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/SerializedTree" }
+        }
+      }
+    },
+    "ModelEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "model_version",
+        "dataset_id",
+        "target_name",
+        "target_unit",
+        "van_bemmelen_k",
+        "selection_status",
+        "selected_model_family",
+        "beats_ols_baseline",
+        "provenance",
+        "preprocessing",
+        "predictor",
+        "uncertainty",
+        "ood",
+        "explainability",
+        "metrics",
+        "artifact_sha256"
+      ],
+      "properties": {
+        "model_id": { "type": "string", "minLength": 1 },
+        "model_version": { "type": "string", "minLength": 1 },
+        "dataset_id": { "type": "string", "minLength": 1 },
+        "target_name": {
+          "type": "string",
+          "enum": ["OM_pct", "SOC_pct", "OC_pct", "POXC_mg_kg"]
+        },
+        "target_unit": {
+          "type": "string",
+          "enum": ["%", "mg C/kg dry soil"]
+        },
+        "van_bemmelen_k": {
+          "type": ["number", "null"],
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "selection_status": {
+          "type": "string",
+          "enum": [
+            "selected_champion",
+            "baseline_ols",
+            "benchmark_reference",
+            "rejected_under_baseline"
+          ]
+        },
+        "selected_model_family": {
+          "type": "string",
+          "enum": [
+            "standardized_linear_interaction",
+            "ridge",
+            "elastic_net",
+            "huber",
+            "random_forest",
+            "hist_gradient_boosting",
+            "lightgbm"
+          ]
+        },
+        "beats_ols_baseline": { "type": "boolean" },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_title", "doi_or_slug", "is_synthetic_or_fixture"],
+          "properties": {
+            "source_title": { "type": "string", "minLength": 1 },
+            "doi_or_slug": { "type": "string", "minLength": 1 },
+            "is_synthetic_or_fixture": { "type": "boolean" }
+          }
+        },
+        "preprocessing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw_features",
+            "interaction_terms",
+            "model_feature_order",
+            "feature_means",
+            "feature_stds",
+            "feature_mins",
+            "feature_maxs"
+          ],
+          "properties": {
+            "raw_features": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "interaction_terms": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/InteractionTerm" }
+            },
+            "model_feature_order": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "feature_means": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "feature_stds": {
+              "type": "object",
+              "additionalProperties": { "type": "number", "exclusiveMinimum": 0 }
+            },
+            "feature_mins": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "feature_maxs": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "feature_q01": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "feature_q99": {
+              "type": "object",
+              "additionalProperties": { "type": "number" }
+            },
+            "categorical_encodings": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "predictor": {
+          "oneOf": [
+            { "$ref": "#/$defs/LinearPredictor" },
+            { "$ref": "#/$defs/TreeEnsemblePredictor" }
+          ]
+        },
+        "uncertainty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "alpha",
+            "q_095",
+            "empirical_coverage",
+            "mean_interval_width",
+            "clip_lower_at_zero",
+            "apply_van_bemmelen_to_interval"
+          ],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["split_conformal", "oof_conformal"]
+            },
+            "alpha": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+            "q_095": { "type": "number", "minimum": 0 },
+            "empirical_coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+            "mean_interval_width": { "type": "number", "minimum": 0 },
+            "clip_lower_at_zero": { "type": "boolean", "const": true },
+            "apply_van_bemmelen_to_interval": { "type": "boolean" }
+          }
+        },
+        "ood": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "feature_order",
+            "feature_mins",
+            "feature_maxs",
+            "mahalanobis_mean",
+            "mahalanobis_inv_cov",
+            "regularization_eps",
+            "d2_caution_threshold",
+            "d2_ood_threshold",
+            "domain_status_labels"
+          ],
+          "properties": {
+            "feature_order": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "feature_mins": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "number" }
+            },
+            "feature_maxs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "number" }
+            },
+            "feature_q01": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "number" }
+            },
+            "feature_q99": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "number" }
+            },
+            "mahalanobis_mean": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "number" }
+            },
+            "mahalanobis_inv_cov": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "number" }
+              }
+            },
+            "regularization_eps": { "type": "number", "exclusiveMinimum": 0 },
+            "d2_caution_threshold": { "type": "number", "exclusiveMinimum": 0 },
+            "d2_ood_threshold": { "type": "number", "exclusiveMinimum": 0 },
+            "isolation_forest_summary": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["n_estimators", "contamination", "train_ood_rate"],
+              "properties": {
+                "n_estimators": { "type": "integer", "minimum": 1 },
+                "contamination": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.5 },
+                "train_ood_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+                "offset": { "type": "number" }
+              }
+            },
+            "domain_status_labels": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "string",
+                "enum": ["In-Range", "Caution", "Outside Calibration Range"]
+              }
+            }
+          }
+        },
+        "explainability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "global_importance", "stratified_errors"],
+          "properties": {
+            "method": { "type": "string", "minLength": 1 },
+            "global_importance": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["feature", "importance", "signed_effect", "rank"],
+                "properties": {
+                  "feature": { "type": "string", "minLength": 1 },
+                  "importance": { "type": "number", "minimum": 0 },
+                  "signed_effect": { "type": ["number", "null"] },
+                  "rank": { "type": "integer", "minimum": 1 }
+                }
+              }
+            },
+            "stratified_errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["stratum_column", "stratum_value", "n", "rmse", "mae", "r2"],
+                "properties": {
+                  "stratum_column": { "type": "string", "minLength": 1 },
+                  "stratum_value": { "type": "string", "minLength": 1 },
+                  "n": { "type": "integer", "minimum": 1 },
+                  "rmse": { "type": "number", "minimum": 0 },
+                  "mae": { "type": "number", "minimum": 0 },
+                  "r2": { "type": ["number", "null"] }
+                }
+              }
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cv_strategy",
+            "n_samples",
+            "n_groups",
+            "rmse",
+            "mae",
+            "r2",
+            "baseline_ols_rmse",
+            "baseline_ols_mae",
+            "baseline_ols_r2",
+            "model_comparison"
+          ],
+          "properties": {
+            "cv_strategy": { "type": "string", "minLength": 1 },
+            "n_samples": { "type": "integer", "minimum": 1 },
+            "n_groups": { "type": ["integer", "null"], "minimum": 1 },
+            "rmse": { "type": "number", "minimum": 0 },
+            "mae": { "type": "number", "minimum": 0 },
+            "r2": { "type": "number" },
+            "baseline_ols_rmse": { "type": "number", "minimum": 0 },
+            "baseline_ols_mae": { "type": "number", "minimum": 0 },
+            "baseline_ols_r2": { "type": "number" },
+            "model_comparison": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "model_name",
+                  "rmse",
+                  "mae",
+                  "r2",
+                  "beats_ols_baseline",
+                  "retained"
+                ],
+                "properties": {
+                  "model_name": { "type": "string", "minLength": 1 },
+                  "rmse": { "type": "number", "minimum": 0 },
+                  "mae": { "type": "number", "minimum": 0 },
+                  "r2": { "type": "number" },
+                  "beats_ols_baseline": { "type": "boolean" },
+                  "retained": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
